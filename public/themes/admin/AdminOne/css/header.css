@@ -1,0 +1,94 @@
+/* =========================================================
+ * HEADER APP
+ * ========================================================= */
+
+/* Company name */
+.bg_header .nm_company {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Navbar base */
+.bg_header .navbar {
+    background-color: var(--white);
+    border-bottom: 1px solid var(--gray-light);
+}
+
+/* Brand / Logo */
+.bg_header .navbar-brand {
+    margin-top: -5px;
+    padding-left: 0;
+}
+.bg_header .navbar-brand img {
+    height: 50px;
+    padding-top: 5px;
+    padding-left: 0;
+}
+
+/* Nav list */
+.bg_header .navbar-nav {
+    position: absolute;
+    right: 1%;
+    font-size: 14px;
+}
+.bg_header .navbar-nav .nav-item { float: left; }
+
+/* Nav links */
+.bg_header .navbar-nav a       { cursor: pointer; color: rgb(105,105,105); }
+.bg_header .navbar-nav a:hover { color: var(--blue); }
+
+/* Nav icons */
+.bg_header .navbar-nav i {
+    float: left;
+    font-size: 18px;
+    margin-top: 1px;
+    margin-right: 5px;
+}
+
+/* Avatar */
+.bg_header .navbar-nav .nav-item img {
+    float: left;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--gray-light);
+    margin-top: -5px;
+    margin-right: 5px;
+}
+
+/* Shared notif badge base */
+.bg_header span.notif,
+.bg_header .navbar-nav .nav-item .notif {
+    display: block;
+    position: relative;
+    float: left;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 2.5px;
+    font-weight: 600;
+    color: var(--white);
+    z-index: 9;
+}
+
+/* Notif badge — nav item (biru) */
+.bg_header .navbar-nav .nav-item .notif {
+    background-color: var(--blue);
+    margin-top: -17px;
+    margin-left: -10px;
+}
+
+/* Notif badge — cog (merah) */
+.bg_header span.notif.cog {
+    float: right;
+    background-color: var(--red-dark);
+    font-size: 14px;
+    padding-top: 2.5px;
+    margin-top: -10px;
+}
+
+/* Toggler (mobile) */
+.bg_header .navbar-toggler {
+    color: var(--blue);
+    font-size: 18px;
+}

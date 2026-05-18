@@ -1,0 +1,139 @@
+/* =========================================================
+ * SIDEBAR
+ * ========================================================= */
+
+/* ---- Shared sidebar panel base ---- */
+.sidebar,
+.bg_sidebar {
+    position: fixed;
+    top: 0;
+    background-color: var(--white);
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: var(--transition);
+    z-index: 1201;
+}
+.sidebar {
+    width: 280px;
+    height: 100%;
+    z-index: 100;
+}
+.bg_sidebar {
+    padding: 0 0 100px;
+    margin-bottom: 100px;
+    border-right: 1px solid var(--gray-light);
+    height: 100vh;
+}
+.bg_sidebar a,
+.menu_sidebar a,
+.list_sidebar a:active,
+.list_sidebar a:focus { text-decoration: none; }
+
+
+/* ---- Toggle button (mobile) ---- */
+.btnSidebarMenu {
+    display: none;
+    position: fixed;
+    top: 70px;
+    width: auto;
+    cursor: pointer;
+    padding: 6px 12px;
+    margin: 5px 0 0 280px;
+    border-radius: 0 5px 5px 0;
+    font-size: 18px;
+    color: var(--white);
+    background-color: var(--blue);
+    opacity: 0.7;
+    z-index: 12;
+    transition: var(--transition);
+}
+.btnSidebarMenu:hover { opacity: 1; }
+
+
+/* ---- Logo areas (shared base) ---- */
+.linelogosidebar,
+.bg_logo_sidebar,
+.bg_logo_company_sidebar {
+    width: 100%;
+    top: 0;
+    text-align: center;
+    background-color: var(--white);
+    border-bottom: 1px solid var(--gray-light);
+    z-index: 1201;
+    padding: 8px 5px;
+}
+
+.linelogosidebar {
+    height: 92px;
+    padding-top: 20px;
+}
+.linelogosidebar img { height: 50px; }
+
+.linelogosidebar_min         { padding: 8px 8px 8px; padding-top: 20px; }
+.linelogosidebar_min img     { height: 50px; }
+
+.bg_logo_sidebar {
+    height: 72px;
+    position: relative;
+    left: -5px;
+}
+.bg_logo_sidebar img {
+    height: 50px;
+    padding-top: 5px;
+    padding-left: 10px;
+}
+
+.bg_logo_company_sidebar         { padding-bottom: 15px; padding-left: 2px; padding-right: 2px; }
+.bg_logo_company_sidebar img     { width: 220px; padding-top: 5px; margin-bottom: 10px; }
+.bg_logo_company_sidebar .nm_company { font-size: 16px; font-weight: 600; }
+
+
+/* ---- Menu items (shared base) ---- */
+.list_sidebar,
+.list_sidebar_min {
+    width: 280px;
+    padding: 8px 0 15px 10px;
+    border-bottom: 1px solid var(--gray-light);
+    font-size: 16px;
+    color: rgb(105,105,105);
+    cursor: pointer;
+}
+
+/* list_sidebar states */
+.list_sidebar.active            { color: var(--white); background-color: var(--blue); }
+.list_sidebar:hover             { color: var(--blue); }
+.list_sidebar.active:hover      { color: var(--white); }
+.list_sidebar.akses,
+.list_sidebar.home              { display: block; }
+
+/* list_sidebar inner */
+.list_sidebar .txt              { padding-top: 5px; }
+.list_sidebar .txt.sub_action  { padding-left: 20px; }
+.list_sidebar .txt i            { width: 17.5px; text-align: center; margin-right: 5px; }
+.list_sidebar span              { float: right; font-size: 12px; padding-top: 6px; margin-right: 10px; }
+
+.list_sidebar select {
+    float: right;
+    width: 80px;
+    height: 40px;
+    padding: 7px 2px 5px;
+    background-color: var(--white);
+    border: 1px solid var(--gray-light);
+    color: var(--blue-alert-tx);
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: -7px;
+}
+
+/* list_sidebar_min inner */
+.list_sidebar_min .txt         { margin-left: 15px; }
+.list_sidebar_min .txt i       { font-size: 18px; margin-right: 30px; }
+.list_sidebar_min.subsidebar   { display: none; }
+
+
+/* ---- Submenu ---- */
+.sub_sidebar                    { padding: 0; }
+.sub_sidebar .list_sidebar      { padding-left: 25px; }
+.sub_sidebar.show               { transition: var(--transition); }

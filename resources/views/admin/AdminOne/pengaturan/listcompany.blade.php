@@ -32,13 +32,12 @@
 										<table class="table_view table-striped table-hover">
 											<thead>
 												<tr>
-													<th style="width:30px; text-align: center;">No</th>
-													<th style="min-width:200px; text-align: center;">Logo</th>
-													<th style="min-width:100px; text-align: center;">Kode</th>
-													<th style="min-width:250px; text-align: center;">Nama</th>
-													<th style="min-width:200px; text-align: center;">Jenis</th>
-													<th style="min-width:150px; text-align: center;">Alamat</th>
-													<th style="min-width:250px; text-align: center;">Email</th>
+													<th style="width:50px; text-align: center;">No</th>
+													<th style="width:70px;">Logo</th>
+													<th style="min-width:100px;">Nama</th>
+													<th style="min-width:100px;">Jenis</th>
+													<th style="min-width:100px;">Alamat</th>
+													<th style="min-width:100px;">Email</th>
 													<th class="colright" style="width:30px; text-align: center;"><i class="head fa fa-cog"></i></th>
 												</tr>
 											</thead>
@@ -73,10 +72,10 @@
                                                             <img 
                                                                 src="{{ $view_data['foto'] ? asset('/themes/admin/AdminOne/image/public/'.$view_data['foto']) : asset('/themes/admin/AdminOne/image/public/icon.png') }}" 
                                                                 alt="Logo" 
-                                                                style="width: 150px; height: 100px;">
+																class="table-avatar"
+															>
                                                         </td>
-                                                        <td style="text-align:center;">{{$view_data['code_data']}} </td>
-														<td>{{$view_data['nama_company']}} </td>
+														<td>{{$view_data['nama_company']}} <br> <div class="table-badge">{{$view_data['code_data']}}</div></td>
 														<td>{{$view_data['jenis']}} </td>
 														<td>{{$view_data['alamat']}} </td>
 														<td>{{$view_data['email']}} </td>

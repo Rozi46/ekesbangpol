@@ -68,17 +68,16 @@ class ApiBerita
             return response()->json(['status_message' => 'error', 'note' => 'Tidak ada akses', 'results' => []], 403);
         }
 
-        // $validator = Validator::make($request->all(), [
-        //     'judul_berita'  => 'required|string|max:200',
-        //     'isi_berita'    => 'required|string|max:200',
-        //     'sumber_berita' => 'required|string|max:200',
-        //     'photo_berita'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
-        //     'status_data'   => 'required|string|max:200',
-        // ]);
+        $validator = Validator::make($request->all(), [
+            'judul_berita'  => 'required|string|max:200',
+            'isi_berita'    => 'required|string',
+            'sumber_berita' => 'required|string|max:200',
+            'photo_berita'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-        // if ($validator->fails()) {
-        //     return response()->json(['status_message' => 'error', 'note' => $validator->errors()->first(), 'results' => []], 422);
-        // }
+        if ($validator->fails()) {
+            return response()->json(['status_message' => 'error', 'note' => $validator->errors()->first(), 'results' => []], 422);
+        }
 
         try {
             DB::beginTransaction();
@@ -149,7 +148,7 @@ class ApiBerita
             return response()->json(['status_message' => 'error', 'note' => 'Tidak ada akses', 'results' => []], 403);
         }
 
-        $berita = Berita::where('code_data', $request->code_data)->where('type_data', 'Berita')->first();
+        $berita = Berita::where('code_data', $request->code_data)->where('tipe_berita', 'Berita')->first();
 
         if (!$berita) {
             return response()->json(['status_message' => 'error', 'note' => 'Data tidak ditemukan', 'results' => []], 404);
@@ -173,27 +172,26 @@ class ApiBerita
             return response()->json(['status_message' => 'error', 'note' => 'Tidak ada akses', 'results' => []], 403);
         }
 
-        $berita = Berita::where('code_data', $request->code_data)->where('type_data', 'Berita')->first();
+        $berita = Berita::where('code_data', $request->code_data)->where('tipe_berita', 'Berita')->first();
         if (!$berita) {
             return response()->json(['status_message' => 'error', 'note' => 'Data tidak ditemukan', 'results' => []], 404);
         }
 
-        $validator = Validator::make($request->all(), [
-            'judul_berita'  => 'required|string|max:200',
-            'isi_berita'    => 'required|string|max:200',
-            'sumber_berita' => 'required|string|max:200',
-            'photo_berita'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'status_data'   => 'required|string|max:200',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'judul_berita'  => 'required|string|max:200',
+        //     'isi_berita'    => 'required|string|max:200',
+        //     'sumber_berita' => 'required|string|max:200',
+        //     'photo_berita'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        // ]);
 
-        if ($validator->fails()) {
-            return response()->json(['status_message' => 'error', 'note' => $validator->errors()->first(), 'results' => []], 422);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json(['status_message' => 'error', 'note' => $validator->errors()->first(), 'results' => []], 422);
+        // }
 
         try {
             DB::beginTransaction();
 
-            $photoName = $berita->photo_berita;
+            $photoName = $berita->tumb_berita;
             // jika upload foto baru
             if ($request->hasFile('photo_berita')) {
                 $file = $request->file('photo_berita');
@@ -206,13 +204,16 @@ class ApiBerita
                 }
             }
 
+            $url_berita = str_replace(' ', '-',$request->judul_berita);
+            $url_berita = preg_replace('/[^a-zA-Z0-9-]/','', $url_berita);
+            $url_berita = strtolower(str_replace('--', '-',$url_berita));
+
             $berita->update([
                 'url_berita'    => $url_berita,
                 'judul_berita'  => $request->judul_berita,
                 'isi_berita'    => $request->isi_berita,
                 'sumber_berita' => $request->sumber_berita,
-                'tumb_berita'   => $photoName,
-                'status_data'   => $request->status_data,
+                'tumb_berita'   => $photoName
             ]);
 
             Activity::create([
@@ -250,7 +251,7 @@ class ApiBerita
             return response()->json(['status_message' => 'error','note' => 'Tidak ada akses','results' => []], 403);
         }
 
-        $berita = Berita::where('code_data', $request->code_data)->where('type_data', 'Berita')->first();
+        $berita = Berita::where('code_data', $request->code_data)->where('tipe_berita', 'Berita')->first();
         if (!$berita) {
             return response()->json(['status_message' => 'error','note' => 'Data tidak ditemukan','results' => []], 404);
         }
@@ -270,7 +271,7 @@ class ApiBerita
             ]);
 
             DB::commit();
-            return response()->json(['status_message' => 'success','note' => 'Data berhasil disimpan','results' => []]);
+            return response()->json(['status_message' => 'success','note' => 'Status berhasil diperbarui','results' => []]);
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -296,7 +297,7 @@ class ApiBerita
             return response()->json(['status_message' => 'error','note' => 'Tidak ada akses','results' => []], 403);
         }
 
-        $berita = Berita::where('code_data', $request->code_data)->where('type_data', 'Berita')->first();
+        $berita = Berita::where('code_data', $request->code_data)->where('tipe_berita', 'Berita')->first();
         if (!$berita) {
             return response()->json(['status_message' => 'error','note' => 'Data tidak ditemukan','results' => []], 404);
         }

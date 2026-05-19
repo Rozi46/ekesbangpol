@@ -34,11 +34,11 @@
                             <table class="table_view table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th width="40" class="text-center">No</th>
-                                        <th class="text-center sortable" data-sort="code_data">Kode Data <i class="fa fa-sort"></i></th>
-                                        <th class="text-center sortable" data-sort="jenis_cuti">Pangkat <i class="fa fa-sort"></i></th>
-                                        <th class="text-center sortable" data-sort="jenis_cuti">Golongan <i class="fa fa-sort"></i></th>
-                                        <th class="text-center sortable" data-sort="jenis_cuti">Ruang <i class="fa fa-sort"></i></th>
+                                        <th width="50" class="text-center">No</th>
+                                        <th class="sortable" data-sort="code_data">Kode Data <i class="fa fa-sort"></i></th>
+                                        <th class="sortable" data-sort="jenis_cuti">Pangkat <i class="fa fa-sort"></i></th>
+                                        <th class="sortable" data-sort="jenis_cuti">Golongan <i class="fa fa-sort"></i></th>
+                                        <th class="sortable" data-sort="jenis_cuti">Ruang <i class="fa fa-sort"></i></th>
                                         <th width="100" class="text-center">Status</th>
                                         <th width="100" class="text-center"><i class="head fa fa-cog"></i></th>
                                     </tr>
@@ -502,7 +502,7 @@
                 html += `
                     <tr>
                         <td class="text-center">${res.from + index}</td>
-                        <td class="text-center">${item.code_data ?? '-'}</td>
+                        <td>${item.code_data ?? '-'}</td>
                         <td>${item.pangkat ?? '-'}</td>
                         <td>${item.golongan ?? '-'}</td>
                         <td>${item.ruang ?? '-'}</td>

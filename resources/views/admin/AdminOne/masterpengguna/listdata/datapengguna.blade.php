@@ -33,16 +33,15 @@
 										<table class="table_view table-striped table-hover">
 											<thead>
 												<tr>
-													<th style="width:30px; text-align: center;">No</th>
+													<th style="width:50px; text-align: center;">No</th>
 													<?php if($res_user['tipe_user'] == 'Super User'){?>
-														<th style="min-width:200px; text-align: center;">Nama Perusahaan</th>
-														<!-- <th style="min-width:150px; text-align: center;">Nama Cabang</th> -->
+														<th style="min-width:100px;">Nama Perusahaan</th>
 													<?php } ?>
-													<th style="min-width:200px; text-align: center;">Nama Pengguna</th>
-													<th style="min-width:200px; text-align: center;">Level Pengguna</th>
-													<th style="min-width:150px; text-align: center;">Kode Pengguna</th>
-													<th style="min-width:100px; text-align: center;">Email Pengguna</th>
-													<th style="min-width:250px; text-align: center;">Masuk Terakhir</th>
+													<th style="width:70px;">Photo</th>
+													<th style="min-width:100px;">Nama Pengguna</th>
+													<th style="min-width:100px;">Level Pengguna</th>
+													<th style="min-width:100px;">Email Pengguna</th>
+													<th style="min-width:100px;">Masuk Terakhir</th>
 													<th style="min-width:100px; text-align: center;">Status</th>
 												</tr>
 											</thead>
@@ -63,9 +62,15 @@
 														<?php if($res_user['tipe_user'] == 'Super User'){?>
 															<td>{{$view_data['company']['nama_company']}}</td>
 														<?php } ?>
-														<td>{{$view_data['full_name']}}</td>
+														<td class="text-center">
+															<img 
+																src="{{ $view_data['image'] == 'no_img' ? asset('/themes/admin/AdminOne/image/no_image.jpg') : asset('/themes/admin/AdminOne/image/upload/'.$view_data['image']) }}" 
+																class="table-avatar"
+																onerror="this.onerror=null;this.src='/themes/admin/AdminOne/image/no_image.jpg';"
+															>
+														</td>
+														<td>{{$view_data['full_name']}} <br><div class="table-badge">{{$view_data['code_data']}}</div></td>
 														<td>{{$view_data['level_admin']['level_name']}}</td>
-														<td style="text-align:center;">{{$view_data['code_data']}}</td>
 														<td>{{$view_data['email']}}</td>															
 														<td><?php if($view_data['created_at'] != $view_data['updated_at']){?> {{\Carbon\Carbon::parse($view_data['updated_at'])->translatedFormat('l, j F Y - H:i:s')}}<?php }else{echo "Belum Ada Aktivitas";} ?> </td>
 														<td style="text-align:center;">

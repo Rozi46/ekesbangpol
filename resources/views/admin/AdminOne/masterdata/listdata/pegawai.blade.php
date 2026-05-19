@@ -34,12 +34,12 @@
                                     <thead>
                                         <tr>
                                             <th style="width:30px; text-align: center;">No</th>
-                                            <th class="sortable" style="min-width:200px; text-align: center;" data-sort="nip">NIP <i class="fa fa-sort"></i></th>
-                                            <th class="sortable" style="min-width:200px; text-align: center;" data-sort="nama_pegawai">Nama Pegawai <i class="fa fa-sort"></i></th>
-                                            <th class="sortable" style="min-width:200px; text-align: center;" data-sort="gender">Gender <i class="fa fa-sort"></i></th>
-                                            <th class="sortable" style="min-width:200px; text-align: center;" data-sort="jabatan">Jabatan <i class="fa fa-sort"></i></th>
-                                            <th class="sortable" style="min-width:200px; text-align: center;" data-sort="email">Email <i class="fa fa-sort"></i></th>
-                                            <th class="sortable" style="min-width:200px; text-align: center;" data-sort="nomor_hp">Nomor HP <i class="fa fa-sort"></i></th>
+                                            <th class="sortable" style="min-width:70px;">Photo</th>
+                                            <th class="sortable" style="min-width:250px;" data-sort="nama_pegawai">Nama Pegawai <i class="fa fa-sort"></i></th>
+                                            <th class="sortable" style="min-width:100px;" data-sort="gender">Gender <i class="fa fa-sort"></i></th>
+                                            <th class="sortable" style="min-width:200px;" data-sort="jabatan">Jabatan <i class="fa fa-sort"></i></th>
+                                            <th class="sortable" style="min-width:200px;" data-sort="email">Email <i class="fa fa-sort"></i></th>
+                                            <th class="sortable" style="min-width:200px;" data-sort="nomor_hp">Nomor HP <i class="fa fa-sort"></i></th>
                                             <th style="min-width:100px; text-align: center;">Status</th>
                                             <th class="colright" style="min-width:100px; text-align: center;"><i class="head fa fa-cog"></i></th>
                                         </tr>
@@ -782,16 +782,27 @@
                     const checked = isActive ? 'checked' : '';
                     const nextStatus = isActive ? 'Tidak Aktif' : 'Aktif';
                     const editDisabled = !action.edit;
-                    const deleteDisabled = !action.delete;
+                    const deleteDisabled = !action.delete;                    
+
+                    const photoUrl = item.photo_profil
+                        ? `/themes/admin/AdminOne/image/upload/${item.photo_profil}`
+                        : `/themes/admin/AdminOne/image/no_image.jpg`;
+
                     html += `
                         <tr>
                             <td class="text-center">${res.from + index}</td>
-                            <td class="text-center">${item.nip ?? '-'}</td>
-                            <td>${item.nama_pegawai ?? '-'}</td>
-                            <td class="text-center">${item.gender ?? '-'}</td>
+                            <td class="text-center">
+                                <img 
+                                    src="${photoUrl}" 
+                                    class="table-avatar"
+                                    onerror="this.onerror=null;this.src='/themes/admin/AdminOne/image/no_image.jpg';"
+                                >
+                            </td>
+                            <td>${item.nama_pegawai ?? '-'} <br><div class="table-badge">${item.nip ?? '-'}</div></td>
+                            <td>${item.gender ?? '-'}</td>
                             <td>${item.position.jabatan ?? '-'}</td>
                             <td>${item.email ?? '-'} </td>
-                            <td class="text-center">${item.nomor_hp ?? '-'}</td>
+                            <td>${item.nomor_hp ?? '-'}</td>
                             <td class="text-center">
                                 <input type="checkbox"
                                     class="ios status-toggle"

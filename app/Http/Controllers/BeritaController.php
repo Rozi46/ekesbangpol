@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 use App\Http\Controllers\{Controller, ApiController};
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Maatwebsite\Excel\Facades\Excel;
-// use App\Exports\{Berita};
+use App\Exports\{DataBerita};
 
 class BeritaController extends Controller
 { 
@@ -145,8 +145,9 @@ class BeritaController extends Controller
 
             $request->validate([
                 'judul_berita'  => 'required|string|max:200',
-                'sumer_berita'  => 'required|string|max:200',
-                'photo_profil'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
+                'isi_berita'    => 'required|string',
+                'sumber_berita' => 'required|string|max:200',
+                'photo_berita'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
             ]);
 
             $response = app('App\Services\ApiBerita')->saveberita($request);
@@ -242,13 +243,12 @@ class BeritaController extends Controller
                 return response()->json(['status_message' => 'error', 'note' => 'Tidak ada akses'], 403);
             }
 
-            $request->validate([
-                'judul_berita'  => 'required|string|max:200',
-                'isi_berita'    => 'required|string|max:200',
-                'sumer_berita'  => 'required|string|max:200',
-                'photo_profil'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
-                'status_data'   => 'required|string|max:200',
-            ]);
+            // $request->validate([
+            //     'judul_berita'  => 'required|string|max:200',
+            //     'isi_berita'    => 'required|string|max:200',
+            //     'sumber_berita'  => 'required|string|max:200',
+            //     'photo_berita'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            // ]);
 
             $response = app('App\Services\ApiBerita')->editberita($request);
             $results  = is_array($response) ? $response : $response->getData(true);
@@ -403,7 +403,7 @@ class BeritaController extends Controller
             if ( ($level_user[$request['app']] ?? 'No') === 'No' || ($level_user[$request['url_active']] ?? 'No') === 'No' || ($level_user[$menu] ?? 'No') === 'No' || ($level_user[$action] ?? 'No') === 'No' ) {  return redirect('/admin/dash')->with('error', 'Tidak ada akses'); }
                 
             $fileName = "Data-berita-".date('Y-m-d-His').".xls" ;
-            Excel::store(new Berita($request),'exports/' . $fileName,'public');
+            Excel::store(new DataBerita($request),'exports/' . $fileName,'public');
             return response()->json(['success' => true,'download_url' => url('/admin/download-exportdata/' . $fileName)]);
             
         } catch (\Exception $e) {

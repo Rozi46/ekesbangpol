@@ -40,11 +40,11 @@
 										<table class="table_view table-striped table-hover">
 											<thead>
 												<tr>
-													<th style="width:30px; text-align: center;">No</th>
-													<th style="min-width:250px; text-align: center;">Tanggal Aktivitas</th>
-													<th style="min-width:150px; text-align: center;">Kode Pengguna</th>
-													<th style="min-width:150px; text-align: center;">Nama Lengkap</th>
-													<th style="min-width:250px; text-align: center;">Keterangan Aktivitas</th>
+													<th style="width:50px; text-align: center;">No</th>
+													<th style="width:250px;">Tanggal Aktivitas</th>
+													<th style="min-width:150px;">Kode Pengguna</th>
+													<th style="min-width:150px;">Nama Lengkap</th>
+													<th style="min-width:250px;">Keterangan Aktivitas</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -56,7 +56,7 @@
 													<tr>
 														<td style="text-align:center;">{{$no}}</td>
 														<td>{{ !empty($view_data['created_at']) ? \Carbon\Carbon::parse($view_data['created_at'])->translatedFormat('l, j F Y - H:i:s') : 'Belum ditentukan' }}</td>
-														<td style="text-align:center;">{{ $view_data['user']['code_data'] ?? 'Belum ditentukan' }}</td>
+														<td>{{ $view_data['user']['code_data'] ?? 'Belum ditentukan' }}</td>
 														<td>{{ $view_data['user']['full_name'] }}</td>
 														<td>{{ $view_data['activity'] ?? 'Belum ditentukan'}}</td>
 													</tr>

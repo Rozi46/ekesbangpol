@@ -9,6 +9,7 @@
             <thead>
                 <tr>
                     <th style="width:40px; text-align: center;">No</th>
+                    <th style="width:150px; text-align: center;">Photo</th>
                     <th style="width:150px; text-align: center;">Nip</th>
                     <th style="width:250px; text-align: center;">Nama</th>
                     <th style="width:200px; text-align: center;">Gender</th>
@@ -22,6 +23,13 @@
                 @forelse($results['data'] as $view_data)
                     <tr>
                         <td class="strtable" style="text-align:center;">{{ $loop->iteration }}</td>
+                        <td style="text-align:center; vertical-align:middle;">
+                            @if(!empty($view_data['photo_profil']))
+                                <img src="{{ public_path('/themes/admin/AdminOne/image/upload/' . $view_data['photo_profil']) }}" width="80" height="80">
+                            @else
+                                Tidak ada foto
+                            @endif
+                        </td>
                         <td class="strtable" style="text-align:center;">{{ $view_data['nip'] }}</td>
 						<td class="strtable">{{ $view_data['nama_pegawai'] }}</td>
                         <td class="strtable" style="text-align:center;">{{ $view_data['gender'] }}</td>

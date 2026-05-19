@@ -445,7 +445,7 @@
                             $('#view_status').text(d.status_data    || '-');
                             $('#view_foto').html(
                                 '<img src="' + getPhotoUrl(d.tumb_berita) + '" '
-                                + 'style="max-width:150px;border-radius:8px;">'
+                                + 'style="width:150px;height:150px;object-fit:contain;border-radius:8px;background:#f5f5f5;">'
                             );
                             $('#view_created_at').text(formatTanggal(d.created_at));
                             $('#view_updated_at').text(formatTanggal(d.updated_at));

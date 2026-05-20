@@ -232,7 +232,7 @@
                                             <div class="upload-content">
                                                 {{-- Preview --}}
                                                 <div class="preview-wrapper">
-                                                    <img src="{{ asset('/themes/admin/AdminOne/image/no_image.jpg') }}" id="preview_photo_profil" class="preview-avatar">
+                                                    <img src="{{ asset('/image/setting/no_image.jpg') }}" id="preview_photo_profil" class="preview-avatar">
                                                     <button type="button" class="btn-change-photo" id="btnChoosePhoto"><i class="fa fa-camera"></i></button>
                                                 </div>
                                                 {{-- Info --}}
@@ -514,7 +514,7 @@
                 // reset radio status  
                 $('input[name="field_status"][value="Aktif"]').prop('checked', true);
                 $('#field_code_data').val('');
-                $('#preview_photo_profil').attr('src','{{ asset("/themes/admin/AdminOne/image/no_image.jpg") }}');
+                $('#preview_photo_profil').attr('src','{{ asset("/image/setting/no_image.jpg") }}');
                 $('#photo_filename').text('Belum ada file dipilih');
             }
 
@@ -554,12 +554,15 @@
                             $('#view_email').text(d.email ?? '-');
                             $('#view_nomor_hp').text(d.nomor_hp ?? '-');
                             $('#view_photo_profil').text(d.photo_profil ?? '-');
-                            $('#view_photo_profil').html(
-                                d.photo_profil
-                                    ? `<img src="/themes/admin/AdminOne/image/upload/${d.photo_profil}" 
-                                            style="max-width:120px;border-radius:8px;">`
-                                    : '-'
-                            );
+                            $('#view_photo_profil').html(`
+                                <img 
+                                    src="${d.photo_profil 
+                                        ? '/image/pegawai/' + d.photo_profil 
+                                        : '/image/setting/no_image.jpg'}" 
+                                    style="max-width:120px;border-radius:8px;"
+                                    onerror="this.onerror=null;this.src='/image/setting/no_image.jpg';"
+                                >
+                            `);
 
                             const statusHtml = d.status_data === 'Aktif'
                                 ? `
@@ -607,10 +610,12 @@
 
                             // tampilkan preview gambar lama
                             if (d.photo_profil) {
-                                $('#preview_photo_profil').attr('src',`/themes/admin/AdminOne/image/upload/${d.photo_profil}`);
+                                $('#preview_photo_profil')
+                                    .attr('src', `/image/pegawai/${d.photo_profil}`)
+                                    .attr('onerror', "this.onerror=null;this.src='/image/setting/no_image.jpg';");
                                 $('#photo_filename').text(d.photo_profil);
                             } else {
-                                $('#preview_photo_profil').attr('src','/themes/admin/AdminOne/image/no_image.jpg');
+                                $('#preview_photo_profil').attr('src','/image/setting/no_image.jpg');
                                 $('#photo_filename').text('Belum ada file dipilih');
                             }
                         }
@@ -785,8 +790,8 @@
                     const deleteDisabled = !action.delete;                    
 
                     const photoUrl = item.photo_profil
-                        ? `/themes/admin/AdminOne/image/upload/${item.photo_profil}`
-                        : `/themes/admin/AdminOne/image/no_image.jpg`;
+                        ? `/image/pegawai/${item.photo_profil}`
+                        : `/image/setting/no_image.jpg`;
 
                     html += `
                         <tr>
@@ -795,7 +800,8 @@
                                 <img 
                                     src="${photoUrl}" 
                                     class="table-avatar"
-                                    onerror="this.onerror=null;this.src='/themes/admin/AdminOne/image/no_image.jpg';"
+                                    alt="user"
+                                    onerror="this.onerror=null;this.src='/image/setting/no_image.jpg';"
                                 >
                             </td>
                             <td>${item.nama_pegawai ?? '-'} <br><div class="table-badge">${item.nip ?? '-'}</div></td>

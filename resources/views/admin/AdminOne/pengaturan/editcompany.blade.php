@@ -63,7 +63,7 @@
 											<div class="form_input text-left">
 												<div class="tag_title">Logo Perusahaan</div>
                                                     <img 
-                                                        src="{{ $results['results']['nama_company']['foto'] ? asset('/themes/admin/AdminOne/image/public/'.$results['results']['nama_company']['foto']) : asset('/themes/admin/AdminOne/image/public/icon.png') }}" 
+                                                        src="{{ $results['results']['nama_company']['foto'] ? asset('/image/company/'.$results['results']['nama_company']['foto']) : asset('/image/setting/icon.png') }}" 
                                                         alt="Logo" srcimg="logo_company" onclick="OpenFile('form_data','logo_company')">
 
 												<input type="file" accept="image/*" name="logo_company" placeholder="Logo Company"/>

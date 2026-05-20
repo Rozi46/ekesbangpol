@@ -159,14 +159,14 @@ class ApiEmployees
             $lastNumber = $lastData ? (int) substr($lastData->code_data, -4) : 0;
             $newNumber  = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
             $otp        = random_int(1000, 9999);
-            $codeData   = "JB{$otp}{$newNumber}";
+            $codeData   = "PG{$otp}{$newNumber}";
 
             $photoName = null;
 
             if ($request->hasFile('photo_profil')) {
                 $file = $request->file('photo_profil');
-                $photoName = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('/themes/admin/AdminOne/image/upload'),$photoName);
+                $photoName = $codeData . time() . $file->getClientOriginalName();
+                $file->move(public_path('/image/pegawai/'),$photoName);
             }
 
             $Employees = Employees::create([
@@ -195,7 +195,7 @@ class ApiEmployees
                 'id'           => Str::uuid(),
                 'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
                 'code_user'    => $admin->code_data,
-                'activity'     => "Tambah data jabatan [{$request->jabatan} - {$codeData}]",
+                'activity'     => "Tambah data pegawai [{$request->nama_pegawai} - {$codeData}]",
                 'code_company' => $admin->code_company,
             ]);
 
@@ -285,12 +285,12 @@ class ApiEmployees
             // jika upload foto baru
             if ($request->hasFile('photo_profil')) {
                 $file = $request->file('photo_profil');
-                $photoName = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('/themes/admin/AdminOne/image/upload'),$photoName);
+                $photoName = $pegawai->code_data . time() . $file->getClientOriginalName();
+                $file->move(public_path('/image/pegawai/'),$photoName);
 
                 // optional: hapus file lama
-                if ($pegawai->photo_profil && file_exists(public_path('/themes/admin/AdminOne/image/upload/' . $pegawai->photo_profil))) {
-                    @unlink(public_path('/themes/admin/AdminOne/image/upload/' . $pegawai->photo_profil));
+                if ($pegawai->photo_profil && file_exists(public_path('/image/pegawai/' . $pegawai->photo_profil))) {
+                    @unlink(public_path('/image/pegawai/' . $pegawai->photo_profil));
                 }
             }
 
@@ -363,7 +363,7 @@ class ApiEmployees
                 'id'           => Str::uuid(),
                 'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
                 'code_user'    => $admin->code_data,
-                'activity'     => "Update status jabatan [{$pegawai->jabatan} - {$pegawai->code_data}]",
+                'activity'     => "Update status pegawai [{$pegawai->nama_pegawai} - {$pegawai->code_data}]",
                 'code_company' => $admin->code_company,
             ]);
 
@@ -401,13 +401,22 @@ class ApiEmployees
 
         try {
             DB::beginTransaction();
-            $jabatan->delete();
+
+            $oldFoto = $pegawai->photo_profil;
+            $pegawai->delete();
+
+            if (!empty($oldFoto)) {
+                $path = public_path('/image/pegawai/' . $oldFoto);
+                if (File::exists($path)) {
+                    File::delete($path);
+                }
+            }
 
             Activity::create([
                 'id'           => Str::uuid(),
                 'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
                 'code_user'    => $admin->code_data,
-                'activity'     => "Hapus data jabatan [{$pegawai->jabatan} - {$pegawai->code_data}]",
+                'activity'     => "Hapus data pegawai [{$pegawai->nama_pegawai} - {$pegawai->code_data}]",
                 'code_company' => $admin->code_company,
             ]);
 

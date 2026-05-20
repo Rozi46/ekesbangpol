@@ -70,7 +70,7 @@
 														<td style="text-align:center;">{{$no}}</td>
                                                         <td>
                                                             <img 
-                                                                src="{{ $view_data['foto'] ? asset('/themes/admin/AdminOne/image/public/'.$view_data['foto']) : asset('/themes/admin/AdminOne/image/public/icon.png') }}" 
+                                                                src="{{ $view_data['foto'] ? asset('/image/company/'.$view_data['foto']) : asset('/setting/icon.png') }}" 
                                                                 alt="Logo" 
 																class="table-avatar"
 															>

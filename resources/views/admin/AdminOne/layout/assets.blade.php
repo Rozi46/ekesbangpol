@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>@yield('title') | Kesbangpol</title>
-        <link rel="shortcut icon" href="{{ url('/themes/admin/AdminOne/image/public/icon.png') }}"/>
+        <link rel="shortcut icon" href="{{ url('/image/setting/icon.png') }}"/>
 
         {{-- CSS --}}
         <link rel="stylesheet" href="{{ url('/themes/admin/AdminOne/lib/fontawesome/css/font-awesome.min.css') }}"/>

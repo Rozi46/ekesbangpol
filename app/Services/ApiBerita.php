@@ -86,15 +86,15 @@ class ApiBerita
             $lastNumber = $lastData ? (int) substr($lastData->code_data, -4) : 0;
             $newNumber  = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
             $otp        = random_int(1000, 9999);
-            // $codeData   = "BR{$otp}{$newNumber}";            
+            // $codeData   = "BR{$otp}{$newNumber}";
             $codeData = 'BR' . now()->format('YmdHis') . Str::upper(Str::random(1));
 
             $photoName = null;
 
             if ($request->hasFile('photo_berita')) {
                 $file = $request->file('photo_berita');
-                $photoName = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('/themes/admin/AdminOne/image/upload'),$photoName);
+                $photoName = $codeData . time() . $file->getClientOriginalName();
+                $file->move(public_path('/image/post/'),$photoName);
             }
 
             $url_berita = str_replace(' ', '-',$request->judul_berita);
@@ -195,12 +195,12 @@ class ApiBerita
             // jika upload foto baru
             if ($request->hasFile('photo_berita')) {
                 $file = $request->file('photo_berita');
-                $photoName = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('/themes/admin/AdminOne/image/upload'),$photoName);
+                $photoName = $berita->code_data . time() . $file->getClientOriginalName();
+                $file->move(public_path('/image/post/'),$photoName);
 
                 // optional: hapus file lama
-                if ($berita->photo_berita && file_exists(public_path('/themes/admin/AdminOne/image/upload/' . $berita->photo_berita))) {
-                    @unlink(public_path('/themes/admin/AdminOne/image/upload/' . $berita->photo_berita));
+                if ($berita->photo_berita && file_exists(public_path('/image/post/' . $berita->photo_berita))) {
+                    @unlink(public_path('/image/post/' . $berita->photo_berita));
                 }
             }
 
@@ -271,7 +271,7 @@ class ApiBerita
             ]);
 
             DB::commit();
-            return response()->json(['status_message' => 'success','note' => 'Status berhasil diperbarui','results' => []]);
+            return response()->json(['status_message' => 'success','note' => 'Data berhasil disimpan','results' => []]);
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -304,13 +304,22 @@ class ApiBerita
 
         try {
             DB::beginTransaction();
+
+            $oldFoto = $berita->photo_berita;
             $berita->delete();
+
+            if (!empty($oldFoto)) {
+                $path = public_path('/image/post/' . $oldFoto);
+                if (File::exists($path)) {
+                    File::delete($path);
+                }
+            }
 
             Activity::create([
                 'id'           => Str::uuid(),
                 'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
                 'code_user'    => $admin->code_data,
-                'activity'     => "Hapus data jabatan [{$berita->judul_berita} - {$berita->code_data}]",
+                'activity'     => "Hapus data berita [{$berita->judul_berita} - {$berita->code_data}]",
                 'code_company' => $admin->code_company,
             ]);
 

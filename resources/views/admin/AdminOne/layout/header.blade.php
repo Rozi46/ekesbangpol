@@ -3,7 +3,7 @@
                 <nav class="navbar navbar-expand-sm bg-lightnavbar-dark fixed-top">
                     <div class="d-flex align-items-center">
                         <a load="true" class="navbar-brand" href="dash">
-                            <img src="{{ $request['data_company']['foto'] == NULL ? asset('/themes/admin/AdminOne/image/public/logo.png') : asset('/themes/admin/AdminOne/image/public/'.$request['data_company']['foto']) }}" alt="Logo">
+                            <img src="{{ $request['data_company']['foto'] == NULL ? asset('/image/setting/logo.png') : asset('/image/company/'.$request['data_company']['foto']) }}" alt="Logo">
                         </a>
                         <div class="nm_company">{{ $request['data_company']['nama_company'] }}</div>
                     </div>
@@ -16,7 +16,8 @@
                                 <a href="notifikasi" class="nav-link notif_head"><i class="fa fa-bell"></i>Notifikasi<span class="notif" line="count_notif_head">0</span></a>
                             </li>
                             <li class="nav-item">
-                                <a load="true" class="nav-link" href="viewaccount"><img src="<?php if( $res_user['image'] == 'no_img'){echo asset('/themes/admin/AdminOne/image/no_image.jpg'); }else{echo asset('/themes/admin/AdminOne/image/upload/'.$res_user['image'].'');}?>" alt="User">{{ $request['nama_admin'] }}</a>
+                                <a load="true" class="nav-link d-flex align-items-center gap-2" href="viewaccount">
+                                    <img src="{{ $res_user['image'] == 'no_img' ? asset('/image/setting/no_image.jpg') : asset('/image/user/'.$res_user['image']) }}" alt="User" onerror="this.onerror=null;this.src='/image/setting/no_image.jpg';"><span>{{ $request['nama_admin'] }}</span></a>
                             </li>
                             <li class="nav-item">
                                 <a load="true" class="nav-link" href="logout"><i class="fa fa-power-off"></i> Keluar</a>

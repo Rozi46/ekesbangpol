@@ -87,8 +87,7 @@
                                                 name="photo_berita" accept="image/*" hidden>
                                             <div class="upload-content">
                                                 <div class="preview-wrapper">
-                                                    <img src="{{ asset('/themes/admin/AdminOne/image/no_image.png') }}"
-                                                        id="preview_photo_berita" class="preview-berita">
+                                                    <img src="{{ asset('/image/setting/no_image.png') }}" id="preview_photo_berita" class="preview-berita">
                                                     <button type="button" class="btn-change-photo" id="btnChoosePhoto">
                                                         <i class="fa fa-camera"></i>
                                                     </button>
@@ -215,7 +214,7 @@
                 export : {{ (($level_user['exportberita'] ?? 'No') === 'Yes') ? 'true' : 'false' }}
             };
 
-            const NO_IMAGE = "{{ asset('/themes/admin/AdminOne/image/no_image.png') }}";
+            const NO_IMAGE = "{{ asset('/image/setting/no_image.png') }}";
 
             $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
 
@@ -238,7 +237,7 @@
             * ===================================================================== */
             function getPhotoUrl(filename) {
                 return filename
-                    ? '/themes/admin/AdminOne/image/upload/' + filename
+                    ? '/image/post/' + filename
                     : NO_IMAGE;
             }
 
@@ -445,7 +444,8 @@
                             $('#view_status').text(d.status_data    || '-');
                             $('#view_foto').html(
                                 '<img src="' + getPhotoUrl(d.tumb_berita) + '" '
-                                + 'style="width:150px;height:150px;object-fit:contain;border-radius:8px;background:#f5f5f5;">'
+                                + 'style="width:150px;height:150px;object-fit:contain;border-radius:8px;background:#f5f5f5;" '
+                                + 'onerror="this.onerror=null;this.src=\'/image/setting/no_image.png\';">'
                             );
                             $('#view_created_at').text(formatTanggal(d.created_at));
                             $('#view_updated_at').text(formatTanggal(d.updated_at));
@@ -462,8 +462,7 @@
                             } else {
                                 $('#field_isi_berita').val(d.isi_berita || '');
                             }
-
-                            $('#preview_photo_berita').attr('src', getPhotoUrl(d.tumb_berita));
+                            $('#preview_photo_berita').attr('src', getPhotoUrl(d.tumb_berita)).attr('onerror', "this.onerror=null;this.src='/image/setting/no_image.png';");
                             $('#photo_filename').text(d.tumb_berita || 'Belum ada file dipilih');
                         }
                     })
@@ -648,9 +647,7 @@
 
                     return '<div class="row bg_data_page">'
                         + '<div class="col-md-12 bg_list_post">'
-                        + '<div class="image">'
-                        + '<img src="' + getPhotoUrl(item.tumb_berita) + '" alt="Berita">'
-                        + '</div>'
+                        + `<div class="image"><img src="${getPhotoUrl(item.tumb_berita)}" alt="Berita" onerror="this.onerror=null;this.src='/image/setting/no_image.png';" > </div>`
                         + '<div class="det_post">'
                         + '<div class="title_list">' + (item.judul_berita || '-') + '</div>'
                         + '<div class="date_list"><i class="fa fa-clock-o"></i> ' + formatTanggal(item.created_at) + '</div>'

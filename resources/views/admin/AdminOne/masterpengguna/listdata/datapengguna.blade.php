@@ -64,9 +64,9 @@
 														<?php } ?>
 														<td class="text-center">
 															<img 
-																src="{{ $view_data['image'] == 'no_img' ? asset('/themes/admin/AdminOne/image/no_image.jpg') : asset('/themes/admin/AdminOne/image/upload/'.$view_data['image']) }}" 
+																src="{{ $view_data['image'] == 'no_img' ? asset('/image/setting/no_image.jpg') : asset('/image/user/'.$view_data['image']) }}" 
 																class="table-avatar"
-																onerror="this.onerror=null;this.src='/themes/admin/AdminOne/image/no_image.jpg';"
+																onerror="this.onerror=null;this.src='/image/setting/no_image.jpg';"
 															>
 														</td>
 														<td>{{$view_data['full_name']}} <br><div class="table-badge">{{$view_data['code_data']}}</div></td>

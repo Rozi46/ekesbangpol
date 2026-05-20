@@ -520,8 +520,8 @@ class ApiUsers
             if ($request->hasFile('image_admin')) {
                 $file = $request->file('image_admin');
 
-                $imageName = 'PP-' . $viewadmin->id . '-' . time() . '.' . $file->extension();
-                $path = public_path('themes/admin/AdminOne/image/upload/');
+                $imageName = $viewadmin->code_data . time() . '.' . $file->extension();
+                $path = public_path('/image/user/');
 
                 // simpan file baru
                 $file->move($path, $imageName);

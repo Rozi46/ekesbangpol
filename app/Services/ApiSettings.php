@@ -344,7 +344,7 @@ class ApiSettings
                 'id'           => Str::uuid(),
                 'code_data'    => now()->format('YmdHis') . Str::random(1),
                 'code_user'    => $viewadmin->code_data,
-                'activity'     => "Tambah data perusahaan [{$company->nama_company}]",
+                'activity'     => "Tambah data perusahaan [{$request->nama}]",
                 'code_company' => $viewadmin->code_company,
             ]);
 
@@ -430,13 +430,13 @@ class ApiSettings
 
 
             if ($request->hasFile('logo_company')) {
-                $imageName = 'PK-' . $request->code_company . '-' . time() . '.' . $request->logo_company->extension();
-                $request->logo_company->move(public_path('/themes/admin/AdminOne/image/public/'), $imageName);
+                $imageName = $get_data['company']->code_data . time() . '.' . $request->logo_company->extension();
+                $request->logo_company->move(public_path('/image/company/'), $imageName);
 
                 Company::where('id', $request->id_data)->update(['foto' => $imageName]);
 
                 if (!empty($get_data['company']->foto)) {
-                    File::delete(public_path('/themes/admin/AdminOne/image/public/' . $get_data['company']->foto));
+                    File::delete(public_path('/image/company/' . $get_data['company']->foto));
                 }
 
                 $file = $request->file('logo_company');
@@ -483,7 +483,7 @@ class ApiSettings
             Company::where('id', $request->id)->delete();
 
             if (!empty($oldFoto)) {
-                $path = public_path('/themes/admin/AdminOne/image/public/' . $oldFoto);
+                $path = public_path('/image/company/' . $oldFoto);
                 if (File::exists($path)) {
                     File::delete($path);
                 }
@@ -559,7 +559,7 @@ class ApiSettings
             DB::beginTransaction();
 
             // FILE PATH
-            $path = public_path('themes/admin/AdminOne/ManualBook/');
+            $path = public_path('document/manualbook/');
 
             if (!File::exists($path)) {
                 File::makeDirectory($path, 0755, true);
@@ -604,7 +604,7 @@ class ApiSettings
     public function downloadmanualbook(Request $request)
     {
         $filename = basename($request->get('d')); // 🔒 prevent path traversal
-        $filePath = public_path("themes/admin/AdminOne/ManualBook/{$filename}");
+        $filePath = public_path("document/manualbook/{$filename}");
 
         if (!file_exists($filePath)) {
             return response()->json(['status_message' => 'error','note' => 'File tidak ditemukan','results' => []], 404);

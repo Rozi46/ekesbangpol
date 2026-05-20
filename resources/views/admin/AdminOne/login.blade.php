@@ -5,7 +5,7 @@
 
     <div class="login-container form_login">    
         <div class="logo">
-            <img src="{{url('/themes/admin/AdminOne/image/public/logo.png')}}"  alt="Logo"/>
+            <img src="{{url('/image/setting/logo.png')}}"  alt="Logo"/>
         </div>
 
         <h2>Login</h2>  

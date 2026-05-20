@@ -48,7 +48,7 @@
 										<div class="col-md-6 bg_form_page">
 											<div class="form_input text-left">
 												<div class="tag_title">Foto Profil</div>
-                                                <img src="<?php if( $res_user['image'] == 'no_img'){echo asset('/themes/admin/AdminOne/image/no_image.jpg'); }else{echo asset('/themes/admin/AdminOne/image/upload/'.$res_user['image'].'');}?>" alt="User" srcimg="image_admin" onclick="OpenFile('form_data','image_admin')">
+                                    			<img src="{{ $res_user['image'] == 'no_img' ? asset('/image/setting/no_image.jpg') : asset('/image/user/'.$res_user['image']) }}" alt="User" onerror="this.onerror=null;this.src='/image/setting/no_image.jpg';" srcimg="image_admin" onclick="OpenFile('form_data','image_admin')">
 												<input type="file" accept="image/*" name="image_admin" placeholder="Foto Profil"/>
 												<div class="btn_200">
 													<button type="button" class="btn btn-secondary" onclick="OpenFile('form_data','image_admin')">Upload Foto</button>

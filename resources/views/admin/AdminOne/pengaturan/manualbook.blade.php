@@ -44,7 +44,7 @@
                                     <div class="row mt-3">
                                         <div class="col-md-12">
                                             <iframe 
-                                                src="{{ isset($results['results']['setting']['manual_book']) ? asset('themes/admin/AdminOne/ManualBook/' . $results['results']['setting']['manual_book'] . '?token=' . $request['token']) : '#' }}" 
+                                                src="{{ isset($results['results']['setting']['manual_book']) ? asset('document/manualbook/' . $results['results']['setting']['manual_book'] . '?token=' . $request['token']) : '#' }}" 
                                                 style="width: 100%; min-height: 80vh; border: 1px solid #ddd;" 
                                                 title="Manual Book">
                                             </iframe>

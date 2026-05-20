@@ -198,10 +198,14 @@ class ApiBerita
                 $photoName = $berita->code_data . time() . $file->getClientOriginalName();
                 $file->move(public_path('/image/post/'),$photoName);
 
-                // optional: hapus file lama
-                if ($berita->photo_berita && file_exists(public_path('/image/post/' . $berita->photo_berita))) {
-                    @unlink(public_path('/image/post/' . $berita->photo_berita));
+                if (!empty($berita->tumb_berita)) {
+                    File::delete(public_path('/image/post/' . $berita->tumb_berita));
                 }
+
+                // // optional: hapus file lama
+                // if ($berita->photo_berita && file_exists(public_path('/image/post/' . $berita->photo_berita))) {
+                //     @unlink(public_path('/image/post/' . $berita->photo_berita));
+                // }
             }
 
             $url_berita = str_replace(' ', '-',$request->judul_berita);

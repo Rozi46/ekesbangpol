@@ -526,10 +526,14 @@ class ApiUsers
                 // simpan file baru
                 $file->move($path, $imageName);
 
-                // hapus file lama (jika ada & bukan default)
-                if ($viewadmin->getOriginal('image') && file_exists($path . $viewadmin->getOriginal('image'))) {
-                    @unlink($path . $viewadmin->getOriginal('image'));
+                if (!empty($viewadmin->image)) {
+                    File::delete(public_path('/image/user/' . $viewadmin->image));
                 }
+
+                // // hapus file lama (jika ada & bukan default)
+                // if ($viewadmin->getOriginal('image') && file_exists($path . $viewadmin->getOriginal('image'))) {
+                //     @unlink($path . $viewadmin->getOriginal('image'));
+                // }
 
                 // update field image
                 $viewadmin->update([

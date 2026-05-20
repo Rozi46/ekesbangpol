@@ -288,10 +288,14 @@ class ApiEmployees
                 $photoName = $pegawai->code_data . time() . $file->getClientOriginalName();
                 $file->move(public_path('/image/pegawai/'),$photoName);
 
-                // optional: hapus file lama
-                if ($pegawai->photo_profil && file_exists(public_path('/image/pegawai/' . $pegawai->photo_profil))) {
-                    @unlink(public_path('/image/pegawai/' . $pegawai->photo_profil));
+                if (!empty($pegawai->photo_profil)) {
+                    File::delete(public_path('/image/pegawai/' . $pegawai->photo_profil));
                 }
+
+                // // optional: hapus file lama
+                // if ($pegawai->photo_profil && file_exists(public_path('/image/pegawai/' . $pegawai->photo_profil))) {
+                //     @unlink(public_path('/image/pegawai/' . $pegawai->photo_profil));
+                // }
             }
 
             $pegawai->update([

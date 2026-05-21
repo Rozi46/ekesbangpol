@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{Controller,SistemController,ActionController,ApiControllerPengaturan,UsersController,SettingsController,LeaveController,RankController,PositionController,EmployeesController,BeritaController,AgendaController};
+use App\Http\Controllers\{Controller,SistemController,ActionController,ApiControllerPengaturan,UsersController,SettingsController,LeaveController,RankController,PositionController,EmployeesController,BeritaController,AgendaController,InfoPengumumanController};
 
 Route::get('/admin', function () {
     // return view('welcome']);
@@ -25,49 +25,6 @@ Route::post('/admin/login',[SistemController::class, 'login']);
 Route::get('/admin/logout',[SistemController::class, 'logout'])->name('logout');
 Route::get('/admin/dash',[SistemController::class, 'dash'])->name('dash');
 
-// Route::group(['middleware' => 'auth.jwt'], function(){
-	// Pengguna
-	// Route::get('/admin/listusers',[UsersController::class, 'listusers']);
-	// Route::get('/admin/exportlistusers',[UsersController::class, 'exportlistusers']);
-	// Route::get('/admin/newusers',[UsersController::class, 'newusers']);
-	// Route::post('/admin/saveusers',[UsersController::class, 'saveusers']);
-	// Route::get('/admin/viewusers',[UsersController::class, 'viewusers']);
-	// Route::post('/admin/editusers',[UsersController::class, 'editusers']);
-	// Route::get('/admin/deleteusers',[UsersController::class, 'deleteusers']);
-	
-	// Level Pengguna
-	// Route::get('/admin/levelusers',[UsersController::class, 'levelusers']);
-	// Route::get('/admin/newlevelusers',[UsersController::class, 'newlevelusers']);
-	// Route::post('/admin/actionlevel',[UsersController::class, 'actionlevel']);
-	// Route::get('/admin/viewlevel',[UsersController::class, 'viewlevel']);
-	// Route::get('/admin/deletelevel',[UsersController::class, 'deletelevel']);
-	
-	// Admin
-	// Route::get('/admin/viewaccount',[UsersController::class, 'viewaccount']);
-	// Route::post('/admin/editaccount',[UsersController::class, 'editaccount']);
-	// Route::post('/admin/editpassaccount',[UsersController::class, 'editpassaccount']);
-
-	// Aktivitas Pengguna
-	// Route::get('/admin/activityusers',[UsersController::class, 'activityusers']);
-	// Route::get('/admin/exportactivityusers',[UsersController::class, 'exportactivityusers']);
-
-	// Setting
-	// Route::get('/admin/settingmenu',[SettingsController::class, 'settingmenu']);
-	// Route::get('/admin/delmenu',[SettingsController::class, 'delmenu']);
-	// Route::post('/admin/actionsettingmenu',[SettingsController::class, 'actionsettingmenu']);
-	// Route::get('/admin/listcompany',[SettingsController::class, 'listcompany']);
-	// Route::get('/admin/newcompany',[SettingsController::class, 'newcompany']);
-	// Route::post('/admin/savecompany',[SettingsController::class, 'savecompany']);
-	// Route::get('/admin/viewcompany',[SettingsController::class, 'viewcompany']);
-	// Route::post('/admin/editcompany',[SettingsController::class, 'editcompany']);
-	// Route::get('/admin/deletecompany',[SettingsController::class, 'deletecompany']);
-	// Route::get('/admin/manualbook',[SettingsController::class, 'manualbook']);
-	// Route::post('/admin/uploadmanualbook',[SettingsController::class, 'uploadmanualbook']);
-	// Route::get('/admin/viewmanualbook',[SettingsController::class, 'viewmanualbook']);
-	// Route::get('/admin/downloadmanualbook',[SettingsController::class, 'downloadmanualbook']);
-	// Route::get('/admin/sinkron',[ActionController::class, 'sinkron']);
-// });
-
 Route::prefix('admin')->name('admin.')->group(function () {
 	// Berita
 	Route::get('/databerita',[BeritaController::class, 'listberita']);
@@ -87,6 +44,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
 	Route::post('/statusagenda', [AgendaController::class, 'statusagenda']);
 	Route::delete('/deleteagenda', [AgendaController::class, 'deleteagenda']);
 	Route::post('/exportagenda', [AgendaController::class, 'exportagenda']);
+	// Info dan Pengumuman
+	Route::get('/datainfopengumuman',[InfoPengumumanController::class, 'listinfopengumuman']);
+	Route::get('/datalistinfopengumuman', [InfoPengumumanController::class, 'datalistinfopengumuman']);
+	Route::post('/saveinfopengumuman',[InfoPengumumanController::class, 'saveinfopengumuman']);
+	Route::get('/viewinfopengumuman',[InfoPengumumanController::class, 'viewinfopengumuman']);
+	Route::put('/updateinfopengumuman', [InfoPengumumanController::class, 'updateinfopengumuman']);
+	Route::post('/statusinfopengumuman', [InfoPengumumanController::class, 'statusinfopengumuman']);
+	Route::delete('/deleteinfopengumuman', [InfoPengumumanController::class, 'deleteinfopengumuman']);
+	Route::post('/exportinfopengumuman', [InfoPengumumanController::class, 'exportinfopengumuman']);
 
 	// Pegawai
 	Route::get('/listpegawai',[EmployeesController::class, 'listpegawai']);

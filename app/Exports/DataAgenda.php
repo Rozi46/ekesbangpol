@@ -62,7 +62,7 @@ class DataAgenda implements FromView
         $request['type'] = 'export';
         $request['searchdate'] = $datefilterstart->format('Y-m-d H:i:s') . 'sd' .$datefilterend->format('Y-m-d H:i:s');
 
-        $response = app('App\Services\ApiAgenda')->listberita($request);
+        $response = app('App\Services\ApiAgenda')->listagenda($request);
         $results = is_array($response) ? $response : ($response->getData(true) ?? []);
 
         return view($viewpath,['url_api' => env('APP_API'), 'app' => $request['app'], 'url_active' => $request['url_active'],'request' => (object) $request,'res_user' => $res_user,'results' => $results['results'] ?? []]);

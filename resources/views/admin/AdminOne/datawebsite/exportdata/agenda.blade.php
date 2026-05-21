@@ -10,10 +10,10 @@
                 <tr>
                     <th style="width:40px; text-align: center;">No</th>
                     <th style="width:200px; text-align: center;">Kode Data</th>
-                    <th style="width:250px; text-align: center;">Photo Berita</th>
-                    <th style="width:250px; text-align: center;">Judul Berita</th>
-                    <th style="width:250px; text-align: center;">Isi Berita</th>
-                    <th style="width:100px; text-align: center;">Sumber Berita</th>
+                    <th style="width:250px; text-align: center;">Photo Agenda</th>
+                    <th style="width:250px; text-align: center;">Judul Agenda</th>
+                    <th style="width:250px; text-align: center;">Isi Agenda</th>
+                    <th style="width:100px; text-align: center;">Sumber Agenda</th>
 					<th style="width:70px; text-align: center;">Status</th>
                 </tr>
             </thead>

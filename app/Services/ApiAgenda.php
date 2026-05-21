@@ -10,16 +10,16 @@ use Illuminate\Database\Query\Builder;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class ApiBerita
+class ApiAgenda
 { 
-    public function listberita(Request $request)
+    public function listagenda(Request $request)
     {
         $admin = User::where('id', $request->u)->where('key_token', $request->token)->first();
         if (!$admin) {
             return response()->json(['status_message' => 'error','note' => 'User tidak valid'], 401);
         }
 
-        $menus = ['datawebsite', 'databerita'];
+        $menus = ['datawebsite', 'dataagenda'];
         $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
 
         $hasNoAccess = collect($menus)->contains(function ($menu) use ($access) {
@@ -30,8 +30,7 @@ class ApiBerita
             return response()->json(['status_message' => 'error','note' => 'Tidak ada akses','results' => []], 403);
         } 
         
-        // $query = Post::query();
-        $query = Post::where('tipe', 'Berita');
+        $query = Post::where('tipe', 'Agenda');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -49,7 +48,7 @@ class ApiBerita
         return response()->json(['status_message'=>'success','note'=>'Proses data berhasil','results'=> $data],200);
     }
 
-    public function saveberita(Request $request)
+    public function saveagenda(Request $request)
     {
         date_default_timezone_set('Asia/Jakarta');
 
@@ -58,7 +57,7 @@ class ApiBerita
             return response()->json(['status_message' => 'error', 'note' => 'Data user tidak valid'], 401);
         }
 
-        $menus  = ['databerita', 'newberita'];
+        $menus  = ['dataagenda', 'newagenda'];
         $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
 
         $hasNoAccess = collect($menus)->contains(fn($m) => ($access[$m] ?? 'No') === 'No');
@@ -80,7 +79,7 @@ class ApiBerita
         try {
             DB::beginTransaction();
 
-            $codeData = 'BR' . now()->format('YmdHis') . Str::upper(Str::random(1));
+            $codeData = 'AG' . now()->format('YmdHis') . Str::upper(Str::random(1));
             $photoName = null;
 
             if ($request->hasFile('photo')) {
@@ -103,7 +102,7 @@ class ApiBerita
                 'sumber'        => $request->sumber,
                 'tumb'          => $photoName,
                 'jumlah_view'   => 0,
-                'tipe'          => 'Berita',
+                'tipe'          => 'Agenda',
                 'status_data'   => 'Aktif',
                 'code_company'  => $admin->code_company,
             ]);
@@ -112,7 +111,7 @@ class ApiBerita
                 'id'           => Str::uuid(),
                 'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
                 'code_user'    => $admin->code_data,
-                'activity'     => "Tambah data berita [{$request->judul} - {$codeData}]",
+                'activity'     => "Tambah data agenda [{$request->judul} - {$codeData}]",
                 'code_company' => $admin->code_company,
             ]);
 
@@ -125,14 +124,14 @@ class ApiBerita
         }
     }
 
-    public function viewberita(Request $request)
+    public function viewagenda(Request $request)
     {
         $admin = User::where('id', $request->u)->where('key_token', $request->token)->first();
         if (!$admin) {
             return response()->json(['status_message' => 'error', 'note' => 'User tidak valid'], 401);
         }
 
-        $menus  = ['databerita'];
+        $menus  = ['dataagenda'];
         $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
 
         $hasNoAccess = collect($menus)->contains(fn($m) => ($access[$m] ?? 'No') === 'No');
@@ -140,7 +139,7 @@ class ApiBerita
             return response()->json(['status_message' => 'error', 'note' => 'Tidak ada akses', 'results' => []], 403);
         }
 
-        $post = Post::where('code_data', $request->code_data)->where('tipe', 'Berita')->first();
+        $post = Post::where('code_data', $request->code_data)->where('tipe', 'Agenda')->first();
 
         if (!$post) {
             return response()->json(['status_message' => 'error', 'note' => 'Data tidak ditemukan', 'results' => []], 404);
@@ -149,14 +148,14 @@ class ApiBerita
         return response()->json(['status_message' => 'success','note' => 'Proses data berhasil','results' => ['post' => $post, 'count_used' => 0]], 200);
     }
 
-    public function editberita(Request $request)
+    public function editagenda(Request $request)
     {
         $admin = User::where('id', $request->u)->where('key_token', $request->token)->first();
         if (!$admin) {
             return response()->json(['status_message' => 'error', 'note' => 'Data user tidak valid'], 401);
         }
 
-        $menus  = ['databerita', 'editberita'];
+        $menus  = ['dataagenda', 'editagenda'];
         $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
 
         $hasNoAccess = collect($menus)->contains(fn($m) => ($access[$m] ?? 'No') === 'No');
@@ -164,27 +163,15 @@ class ApiBerita
             return response()->json(['status_message' => 'error', 'note' => 'Tidak ada akses', 'results' => []], 403);
         }
 
-        $post = Post::where('code_data', $request->code_data)->where('tipe', 'Berita')->first();
+        $post = Post::where('code_data', $request->code_data)->where('tipe', 'Agenda')->first();
         if (!$post) {
             return response()->json(['status_message' => 'error', 'note' => 'Data tidak ditemukan', 'results' => []], 404);
         }
-
-        // $validator = Validator::make($request->all(), [
-        //     'judul'  => 'required|string|max:200',
-        //     'isi'    => 'required|string|max:200',
-        //     'sumber' => 'required|string|max:200',
-        //     'photo'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return response()->json(['status_message' => 'error', 'note' => $validator->errors()->first(), 'results' => []], 422);
-        // }
 
         try {
             DB::beginTransaction();
 
             $photoName = $post->tumb;
-            // jika upload foto baru
             if ($request->hasFile('photo')) {
                 $file = $request->file('photo');
                 $photoName = $post->code_data . time() . $file->getClientOriginalName();
@@ -193,11 +180,6 @@ class ApiBerita
                 if (!empty($post->tumb)) {
                     File::delete(public_path('/image/post/' . $post->tumb));
                 }
-
-                // // optional: hapus file lama
-                // if ($post->photo && file_exists(public_path('/image/post/' . $post->photo))) {
-                //     @unlink(public_path('/image/post/' . $post->photo));
-                // }
             }
 
             $url = str_replace(' ', '-',$request->judul);
@@ -216,7 +198,7 @@ class ApiBerita
                 'id'           => Str::uuid(),
                 'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
                 'code_user'    => $admin->code_data,
-                'activity'     => "Ubah data berita [{$post->judul} - {$post->code_data}]",
+                'activity'     => "Ubah data agenda [{$post->judul} - {$post->code_data}]",
                 'code_company' => $admin->code_company,
             ]);
 
@@ -229,14 +211,14 @@ class ApiBerita
         }
     }
     
-    public function upstatusberita(Request $request)
+    public function upstatusagenda(Request $request)
     {
         $admin = User::where('id', $request->u)->where('key_token', $request->token)->first();
         if (!$admin) {
             return response()->json(['status_message' => 'error','note' => 'Data user tidak valid'], 401);
         }
 
-        $menus = ['databerita', 'editberita'];
+        $menus = ['dataagenda', 'editagenda'];
         $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
 
         $hasNoAccess = collect($menus)->contains(function ($menu) use ($access) {
@@ -247,7 +229,7 @@ class ApiBerita
             return response()->json(['status_message' => 'error','note' => 'Tidak ada akses','results' => []], 403);
         }
 
-        $post = Post::where('code_data', $request->code_data)->where('tipe', 'Berita')->first();
+        $post = Post::where('code_data', $request->code_data)->where('tipe', 'Agenda')->first();
         if (!$post) {
             return response()->json(['status_message' => 'error','note' => 'Data tidak ditemukan','results' => []], 404);
         }
@@ -262,7 +244,7 @@ class ApiBerita
                 'id'           => Str::uuid(),
                 'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
                 'code_user'    => $admin->code_data,
-                'activity'     => "Update status berita [{$post->judul} - {$post->code_data}]",
+                'activity'     => "Update status agenda [{$post->judul} - {$post->code_data}]",
                 'code_company' => $admin->code_company,
             ]);
 
@@ -275,14 +257,14 @@ class ApiBerita
         }
     }
     
-    public function deleteberita(Request $request)
+    public function deleteagenda(Request $request)
     {
         $admin = User::where('id', $request->u)->where('key_token', $request->token)->first();
         if (!$admin) {
             return response()->json(['status_message' => 'error','note' => 'Data user tidak valid'], 401);
         }
 
-        $menus = ['databerita', 'deleteberita'];
+        $menus = ['dataagenda', 'deleteagenda'];
         $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
 
         $hasNoAccess = collect($menus)->contains(function ($menu) use ($access) {
@@ -293,7 +275,7 @@ class ApiBerita
             return response()->json(['status_message' => 'error','note' => 'Tidak ada akses','results' => []], 403);
         }
 
-        $post = Post::where('code_data', $request->code_data)->where('tipe', 'Berita')->first();
+        $post = Post::where('code_data', $request->code_data)->where('tipe', 'Agenda')->first();
         if (!$post) {
             return response()->json(['status_message' => 'error','note' => 'Data tidak ditemukan','results' => []], 404);
         }
@@ -315,7 +297,7 @@ class ApiBerita
                 'id'           => Str::uuid(),
                 'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
                 'code_user'    => $admin->code_data,
-                'activity'     => "Hapus data berita [{$post->judul} - {$post->code_data}]",
+                'activity'     => "Hapus data agenda [{$post->judul} - {$post->code_data}]",
                 'code_company' => $admin->code_company,
             ]);
 

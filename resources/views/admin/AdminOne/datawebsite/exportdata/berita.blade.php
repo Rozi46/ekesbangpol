@@ -24,7 +24,7 @@
                         <td class="strtable" style="text-align:center;">{{$view_data['code_data']}}</td>
                         <td style="text-align:center; vertical-align:middle;">
                             @if(!empty($view_data['tumb_berita']))
-                                <img src="{{ public_path('/themes/admin/AdminOne/image/upload/' . $view_data['tumb_berita']) }}" width="80" height="80">
+                                <img src="{{ public_path('/image/post/' . $view_data['tumb_berita']) }}" width="80" height="80">
                             @else
                                 Tidak ada foto
                             @endif

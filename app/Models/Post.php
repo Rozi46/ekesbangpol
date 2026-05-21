@@ -4,20 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Berita extends Model
+class Post extends Model
 {
-    protected $table = 'db_berita';
+    protected $table = 'db_post';
     protected $fillable = [
         'id',
         'code_data',
         'code_user',
-        'url_berita',
-        'judul_berita',
-        'isi_berita',
-        'sumber_berita',
-        'tumb_berita',
+        'url',
+        'judul',
+        'isi',
+        'sumber',
+        'tumb',
         'jumlah_view',
-        'tipe_berita',
+        'tipe',
         'status_data',
         'code_company',
         'created_at',

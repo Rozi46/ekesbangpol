@@ -10,11 +10,11 @@ use Illuminate\Support\Carbon;
 use App\Http\Controllers\{Controller, ApiController};
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\{DataBerita};
+use App\Exports\{DataAgenda};
 
-class BeritaController extends Controller
+class AgendaController extends Controller
 { 
-    public function listberita(Request $request)
+    public function listagenda(Request $request)
     {
         try { 
             if (!session()->has('key_token_kesbangpol') || !session()->has('admin_login_kesbangpol') || 
@@ -27,11 +27,11 @@ class BeritaController extends Controller
             $request['u'] = session('admin_login_kesbangpol');
             $request['token'] = session('key_token_kesbangpol');
             $request['app'] = 'datawebsite';
-            $request['url_active'] = 'databerita';
+            $request['url_active'] = 'dataagenda';
 
             $menu = 'datawebsite';
-            $action = 'databerita';
-            $viewpath = 'admin.AdminOne.datawebsite.listdata.berita';
+            $action = 'dataagenda';
+            $viewpath = 'admin.AdminOne.datawebsite.listdata.agenda';
 
             $responseUser = app('App\Services\ApiUsers')->getadmin($request);
             $get_user = is_array($responseUser) ? $responseUser : $responseUser->getData(true);
@@ -58,12 +58,12 @@ class BeritaController extends Controller
 
             return view($viewpath,['url_api' => env('APP_API'),'app' => $request['app'],'url_active' => $request['url_active'],'request' => $request,'res_user' => $res_user,'level_user' => $level_user,'list_akses' => $list_akses['results'],'count_vd' => $vd,'keysearch' => $request->keysearch]);
         } catch (Throwable $e) {
-            Log::error('listberita Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
+            Log::error('listagenda Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
             return redirect('/admin/logout')->with('error', 'Terjadi kesalahan sistem.');
         }        
     }
 
-    public function datalistberita(Request $request)
+    public function datalistagenda(Request $request)
     {
         try { 
             if (!session()->has('key_token_kesbangpol') || !session()->has('admin_login_kesbangpol') || 
@@ -76,10 +76,10 @@ class BeritaController extends Controller
             $request['u'] = session('admin_login_kesbangpol');
             $request['token'] = session('key_token_kesbangpol');
             $request['app'] = 'datawebsite';
-            $request['url_active'] = 'databerita';
+            $request['url_active'] = 'dataagenda';
 
             $menu = 'datawebsite';
-            $action = 'databerita';
+            $action = 'dataagenda';
 
             $responseUser = app('App\Services\ApiUsers')->getadmin($request);
             $get_user = is_array($responseUser) ? $responseUser : $responseUser->getData(true);
@@ -101,18 +101,18 @@ class BeritaController extends Controller
 
             if ( ($level_user[$request['app']] ?? 'No') === 'No' || ($level_user[$request['url_active']] ?? 'No') === 'No' || ($level_user[$menu] ?? 'No') === 'No' || ($level_user[$action] ?? 'No') === 'No' ) { return redirect('/admin/dash')->with('error', 'Tidak ada akses'); }
 
-            $response = app('App\Services\ApiBerita')->listberita($request);            
+            $response = app('App\Services\ApiAgenda')->listagenda($request);            
             $results = is_array($response) ? $response : $response->getData(true); 
 
             return $results;
             
         } catch (Throwable $e) {
-            Log::error('datalistberita Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
+            Log::error('datalistagenda Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
             return redirect('/admin/logout')->with('error', 'Terjadi kesalahan sistem.');
         }        
     }
 
-    public function saveberita(Request $request)
+    public function saveagenda(Request $request)
     {
         try {
             if (!session()->has('key_token_kesbangpol') || !session()->has('admin_login_kesbangpol') ||
@@ -125,8 +125,8 @@ class BeritaController extends Controller
             $request['u']     = session('admin_login_kesbangpol');
             $request['token'] = session('key_token_kesbangpol');
 
-            $menu   = 'databerita';
-            $action = 'newberita';
+            $menu   = 'dataagenda';
+            $action = 'newagenda';
 
             $responseUser = app('App\Services\ApiUsers')->getadmin($request);
             $get_user     = is_array($responseUser) ? $responseUser : $responseUser->getData(true);
@@ -150,7 +150,7 @@ class BeritaController extends Controller
                 'photo'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
             ]);
 
-            $response = app('App\Services\ApiBerita')->saveberita($request);
+            $response = app('App\Services\ApiAgenda')->saveagenda($request);
             $results  = is_array($response) ? $response : $response->getData(true);
 
             $status = $results['status_message'] ?? 'error';
@@ -159,12 +159,12 @@ class BeritaController extends Controller
             return response()->json(['status_message' => $status,'note' => $note,'results' => $results['results'] ?? []], $status === 'success' ? 201 : 422);
 
         } catch (Throwable $e) {
-            Log::error('saveberita Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
+            Log::error('saveagenda Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
             return response()->json(['status_message' => 'error', 'note' => 'Terjadi kesalahan sistem: ' . $e->getMessage()], 500);
         }
     }
 
-    public function viewberita(Request $request)
+    public function viewagenda(Request $request)
     {
         try {
             if (!session()->has('key_token_kesbangpol') || !session()->has('admin_login_kesbangpol') ||
@@ -177,7 +177,7 @@ class BeritaController extends Controller
             $request['u']     = session('admin_login_kesbangpol');
             $request['token'] = session('key_token_kesbangpol');
 
-            $menu   = 'databerita';
+            $menu   = 'dataagenda';
 
             $responseUser = app('App\Services\ApiUsers')->getadmin($request);
             $get_user     = is_array($responseUser) ? $responseUser : $responseUser->getData(true);
@@ -195,7 +195,7 @@ class BeritaController extends Controller
 
             $request->validate(['code_data' => 'required']);
 
-            $response = app('App\Services\ApiBerita')->viewberita($request);
+            $response = app('App\Services\ApiAgenda')->viewagenda($request);
             $results  = is_array($response) ? $response : $response->getData(true);
 
             if (($results['note'] ?? '') === 'Data tidak ditemukan') {
@@ -207,12 +207,12 @@ class BeritaController extends Controller
             return response()->json(['status_message' => 'success','note' => 'Data berhasil dimuat','data' => $data], 201);
 
         } catch (Throwable $e) {
-            Log::error('detailberita Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
+            Log::error('detailagenda Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
             return response()->json(['status_message' => 'error', 'note' => 'Terjadi kesalahan sistem: ' . $e->getMessage()], 500);
         }
     }
 
-    public function updateberita(Request $request)
+    public function updateagenda(Request $request)
     {
         try {
             if (!session()->has('key_token_kesbangpol') || !session()->has('admin_login_kesbangpol') ||
@@ -225,8 +225,8 @@ class BeritaController extends Controller
             $request['u']     = session('admin_login_kesbangpol');
             $request['token'] = session('key_token_kesbangpol');
 
-            $menu   = 'databerita';
-            $action = 'editberita';
+            $menu   = 'dataagenda';
+            $action = 'editagenda';
 
             $responseUser = app('App\Services\ApiUsers')->getadmin($request);
             $get_user     = is_array($responseUser) ? $responseUser : $responseUser->getData(true);
@@ -243,14 +243,7 @@ class BeritaController extends Controller
                 return response()->json(['status_message' => 'error', 'note' => 'Tidak ada akses'], 403);
             }
 
-            // $request->validate([
-            //     'judul_berita'  => 'required|string|max:200',
-            //     'isi_berita'    => 'required|string|max:200',
-            //     'sumber_berita'  => 'required|string|max:200',
-            //     'photo_berita'  => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            // ]);
-
-            $response = app('App\Services\ApiBerita')->editberita($request);
+            $response = app('App\Services\ApiAgenda')->editagenda($request);
             $results  = is_array($response) ? $response : $response->getData(true);
 
             $status = $results['status_message'] ?? 'error';
@@ -259,12 +252,12 @@ class BeritaController extends Controller
             return response()->json(['status_message' => $status,'note' => $note,'results' => $results['results'] ?? []], $status === 'success' ? 200 : 422);
 
         } catch (Throwable $e) {
-            Log::error('updateberita Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
+            Log::error('updateagenda Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
             return response()->json(['status_message' => 'error', 'note' => 'Terjadi kesalahan sistem: ' . $e->getMessage()], 500);
         }
     }
 
-    public function statusberita(Request $request)
+    public function statusagenda(Request $request)
     {
         try { 
             if (!session()->has('key_token_kesbangpol') || !session()->has('admin_login_kesbangpol') || 
@@ -277,8 +270,8 @@ class BeritaController extends Controller
             $request['u'] = session('admin_login_kesbangpol');
             $request['token'] = session('key_token_kesbangpol');
 
-            $menu = 'databerita';
-            $action = 'editberita';
+            $menu = 'dataagenda';
+            $action = 'editagenda';
 
             $responseUser = app('App\Services\ApiUsers')->getadmin($request);
             $get_user = is_array($responseUser) ? $responseUser : $responseUser->getData(true);
@@ -305,18 +298,18 @@ class BeritaController extends Controller
                 'status' => 'required|in:Aktif,Tidak Aktif'
             ]);
 
-            $response = app('App\Services\ApiBerita')->upstatusberita($request);
+            $response = app('App\Services\ApiAgenda')->upstatusagenda($request);
             $results = is_array($response) ? $response : $response->getData(true);
 
             return response()->json($results);
             
         } catch (Throwable $e) {
-            Log::error('statusberita Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
+            Log::error('statusagenda Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
             return redirect('/admin/logout')->with('error', 'Terjadi kesalahan sistem.');
         }
     }
 
-    public function deleteberita(Request $request)
+    public function deleteagenda(Request $request)
     {
         try { 
             if (!session()->has('key_token_kesbangpol') || !session()->has('admin_login_kesbangpol') || 
@@ -329,8 +322,8 @@ class BeritaController extends Controller
             $request['u'] = session('admin_login_kesbangpol');
             $request['token'] = session('key_token_kesbangpol');
 
-            $menu = 'databerita';
-            $action = 'deleteberita';
+            $menu = 'dataagenda';
+            $action = 'deleteagenda';
 
             $responseUser = app('App\Services\ApiUsers')->getadmin($request);
             $get_user = is_array($responseUser) ? $responseUser : $responseUser->getData(true);
@@ -356,18 +349,18 @@ class BeritaController extends Controller
                 'code_data' => 'required'
             ]);
 
-            $response = app('App\Services\ApiBerita')->deleteberita($request);
+            $response = app('App\Services\ApiAgenda')->deleteagenda($request);
             $results = is_array($response) ? $response : $response->getData(true);
 
             return response()->json($results);
             
         } catch (Throwable $e) {
-            Log::error('deleteberita Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
+            Log::error('deleteagenda Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
             return redirect('/admin/logout')->with('error', 'Terjadi kesalahan sistem.');
         }
     }
 
-    public function exportberita(Request $request)
+    public function exportagenda(Request $request)
     {
         try { 
             if (!session()->has('key_token_kesbangpol') || !session()->has('admin_login_kesbangpol') || 
@@ -380,10 +373,10 @@ class BeritaController extends Controller
             $request['u'] = session('admin_login_kesbangpol');
             $request['token'] = session('key_token_kesbangpol');
             $request['app'] = 'datawebsite';
-            $request['url_active'] = 'databerita';
+            $request['url_active'] = 'dataagenda';
 
-            $menu = 'databerita';
-            $action = 'exportberita';
+            $menu = 'dataagenda';
+            $action = 'exportagenda';
 
             $responseUser = app('App\Services\ApiUsers')->getadmin($request);
             $get_user = is_array($responseUser) ? $responseUser : $responseUser->getData(true);
@@ -402,8 +395,8 @@ class BeritaController extends Controller
 
             if ( ($level_user[$request['app']] ?? 'No') === 'No' || ($level_user[$request['url_active']] ?? 'No') === 'No' || ($level_user[$menu] ?? 'No') === 'No' || ($level_user[$action] ?? 'No') === 'No' ) {  return redirect('/admin/dash')->with('error', 'Tidak ada akses'); }
                 
-            $fileName = "Data-berita-".date('Y-m-d-His').".xls" ;
-            Excel::store(new DataBerita($request),'exports/' . $fileName,'public');
+            $fileName = "Data-Agenda-".date('Y-m-d-His').".xls" ;
+            Excel::store(new DataAgenda($request),'exports/' . $fileName,'public');
             return response()->json(['success' => true,'download_url' => url('/admin/download-exportdata/' . $fileName)]);
             
         } catch (\Exception $e) {

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{Controller,SistemController,ActionController,ApiControllerPengaturan,UsersController,SettingsController,LeaveController,RankController,PositionController,EmployeesController,BeritaController};
+use App\Http\Controllers\{Controller,SistemController,ActionController,ApiControllerPengaturan,UsersController,SettingsController,LeaveController,RankController,PositionController,EmployeesController,BeritaController,AgendaController};
 
 Route::get('/admin', function () {
     // return view('welcome']);
@@ -78,6 +78,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
 	Route::post('/statusberita', [BeritaController::class, 'statusberita']);
 	Route::delete('/deleteberita', [BeritaController::class, 'deleteberita']);
 	Route::post('/exportberita', [BeritaController::class, 'exportberita']);
+	// Agenda
+	Route::get('/dataagenda',[AgendaController::class, 'listagenda']);
+	Route::get('/datalistagenda', [AgendaController::class, 'datalistagenda']);
+	Route::post('/saveagenda',[AgendaController::class, 'saveagenda']);
+	Route::get('/viewagenda',[AgendaController::class, 'viewagenda']);
+	Route::put('/updateagenda', [AgendaController::class, 'updateagenda']);
+	Route::post('/statusagenda', [AgendaController::class, 'statusagenda']);
+	Route::delete('/deleteagenda', [AgendaController::class, 'deleteagenda']);
+	Route::post('/exportagenda', [AgendaController::class, 'exportagenda']);
 
 	// Pegawai
 	Route::get('/listpegawai',[EmployeesController::class, 'listpegawai']);

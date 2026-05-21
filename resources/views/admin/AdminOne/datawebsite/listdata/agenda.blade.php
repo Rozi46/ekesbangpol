@@ -1,5 +1,5 @@
 @extends('admin.AdminOne.layout.assets')
-@section('title', 'Data Berita')
+@section('title', 'Data Agenda')
 
 @section('content')
     <div class="page_main">
@@ -8,7 +8,7 @@
 
                 {{-- HEADER --}}
                 <div class="col-md-12 bg_page_main form_action" line="hd_action">
-                    <div class="col-md-12 hd_page_main" id="pageTitle">Data Berita</div>
+                    <div class="col-md-12 hd_page_main" id="pageTitle">Data Agenda</div>
                     <div class="col-md-12 bg_act_page_main">
                         <div class="row">
                             <div class="col-xl-12 col_act_page_main text-left" id="headerActions"></div>
@@ -50,27 +50,27 @@
 
                                 <div class="col-md-12 bg_form_page">
                                     <div class="form_input text-left">
-                                        <div class="tag_title">Judul Berita <span>*</span></div>
+                                        <div class="tag_title">Judul Agenda <span>*</span></div>
                                         <input type="text" id="field_judul"
-                                            placeholder="Judul berita.." value="" autofocus />
+                                            placeholder="Judul agenda.." value="" autofocus />
                                         <div class="invalid-feedback" id="err_judul"></div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-12 bg_form_page">
                                     <div class="form_input text-left">
-                                        <div class="tag_title">Isi Berita <span>*</span></div>
+                                        <div class="tag_title">Isi Agenda <span>*</span></div>
                                         <textarea id="field_isi" name="isi"
-                                            class="ckeditor" placeholder="Isi berita.."></textarea>
+                                            class="ckeditor" placeholder="Isi agenda.."></textarea>
                                         <div class="invalid-feedback" id="err_isi"></div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-12 bg_form_page">
                                     <div class="form_input text-left">
-                                        <div class="tag_title">Sumber Berita <span>*</span></div>
+                                        <div class="tag_title">Sumber agenda <span>*</span></div>
                                         <input type="text" id="field_sumber"
-                                            placeholder="Sumber berita.." value="" />
+                                            placeholder="Sumber agenda.." value="" />
                                         <div class="invalid-feedback" id="err_sumber"></div>
                                     </div>
                                 </div>
@@ -87,7 +87,7 @@
                                                 name="photo" accept="image/*" hidden>
                                             <div class="upload-content">
                                                 <div class="preview-wrapper">
-                                                    <img src="{{ asset('/image/setting/no_image.png') }}" id="preview_photo" class="preview-berita">
+                                                    <img src="{{ asset('/image/setting/no_image.png') }}" id="preview_photo" class="preview-agenda">
                                                     <button type="button" class="btn-change-photo" id="btnChoosePhoto">
                                                         <i class="fa fa-camera"></i>
                                                     </button>
@@ -142,7 +142,7 @@
                         <div class="row bg_data_page form_page content">
                             <div class="col-md-12 bg_form_page">
                                 <div class="form-group form_input text-left">
-                                    @if(($level_user['editberita'] ?? 'No') === 'Yes')
+                                    @if(($level_user['editagenda'] ?? 'No') === 'Yes')
                                         <button type="button" class="btn btn-warning btn-sm" id="btnEditFromView">
                                             <i class="fa fa-edit"></i> Ubah Data
                                         </button>
@@ -199,19 +199,19 @@
             * CONSTANTS
             * ===================================================================== */
             const ROUTES = {
-                list   : "{{ url('/admin/datalistberita') }}",
-                store  : "{{ url('/admin/saveberita') }}",
-                detail : "{{ url('/admin/viewberita') }}",
-                update : "{{ url('/admin/updateberita') }}",
-                status : "{{ url('/admin/statusberita') }}",
-                delete : "{{ url('/admin/deleteberita') }}"
+                list   : "{{ url('/admin/datalistagenda') }}",
+                store  : "{{ url('/admin/saveagenda') }}",
+                detail : "{{ url('/admin/viewagenda') }}",
+                update : "{{ url('/admin/updateagenda') }}",
+                status : "{{ url('/admin/statusagenda') }}",
+                delete : "{{ url('/admin/deleteagenda') }}"
             };
 
             const ACTION = {
-                new    : {{ (($level_user['newberita']    ?? 'No') === 'Yes') ? 'true' : 'false' }},
-                edit   : {{ (($level_user['editberita']   ?? 'No') === 'Yes') ? 'true' : 'false' }},
-                delete : {{ (($level_user['deleteberita'] ?? 'No') === 'Yes') ? 'true' : 'false' }},
-                export : {{ (($level_user['exportberita'] ?? 'No') === 'Yes') ? 'true' : 'false' }}
+                new    : {{ (($level_user['newagenda']    ?? 'No') === 'Yes') ? 'true' : 'false' }},
+                edit   : {{ (($level_user['editagenda']   ?? 'No') === 'Yes') ? 'true' : 'false' }},
+                delete : {{ (($level_user['deleteagenda'] ?? 'No') === 'Yes') ? 'true' : 'false' }},
+                export : {{ (($level_user['exportagenda'] ?? 'No') === 'Yes') ? 'true' : 'false' }}
             };
 
             const NO_IMAGE = "{{ asset('/image/setting/no_image.png') }}";
@@ -391,13 +391,13 @@
 
             function renderHeader() {
                 const titles = {
-                    list : 'Data Berita',
-                    add  : 'Tambah Data Berita',
-                    edit : 'Ubah Data Berita',
-                    view : 'Detail Data Berita'
+                    list : 'Data Agenda',
+                    add  : 'Tambah Data Agenda',
+                    edit : 'Ubah Data Agenda',
+                    view : 'Detail Data Agenda'
                 };
 
-                $('#pageTitle').text(titles[state.mode] || 'Data Berita');
+                $('#pageTitle').text(titles[state.mode] || 'Data Agenda');
 
                 let buttons = '<button type="button" class="btn btn-secondary" onclick="BackPage()">'
                             + '<i class="fa fa-chevron-left"></i> Kembali</button> ';
@@ -409,7 +409,7 @@
                     }
                     if (ACTION.export) {
                         buttons += '<button type="button" class="btn btn-info" '
-                                + 'onclick="exportdata({url:\'/admin/exportberita\',btn:this})">'
+                                + 'onclick="exportdata({url:\'/admin/exportagenda\',btn:this})">'
                                 + '<i class="fa fa-download"></i> Export Data</button>';
                     }
                 }
@@ -435,11 +435,11 @@
                         const d = res.data;
 
                         if (target === 'view') {
-                            $('#view_code_data').text(d.code_data   || '-');
-                            $('#view_judul').text(d.judul    || '-');
-                            $('#view_isi').html(d.isi        || '-');
-                            $('#view_sumber').text(d.sumber  || '-');
-                            $('#view_status').text(d.status_data    || '-');
+                            $('#view_code_data').text(d.code_data || '-');
+                            $('#view_judul').text(d.judul || '-');
+                            $('#view_isi').html(d.isi || '-');
+                            $('#view_sumber').text(d.sumber || '-');
+                            $('#view_status').text(d.status_data || '-');
                             $('#view_foto').html(
                                 '<img src="' + getPhotoUrl(d.tumb) + '" '
                                 + 'style="width:150px;height:150px;object-fit:contain;border-radius:8px;background:#f5f5f5;" '
@@ -451,8 +451,8 @@
                         }
 
                         if (target === 'edit') {
-                            $('#field_code_data').val(d.code_data      || '');
-                            $('#field_judul').val(d.judul  || '');
+                            $('#field_code_data').val(d.code_data || '');
+                            $('#field_judul').val(d.judul || '');
                             $('#field_sumber').val(d.sumber || '');
 
                             if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.field_isi) {
@@ -478,23 +478,23 @@
                 const isEdit = state.mode === 'edit';
 
                 // Ambil nilai — CKEditor harus diambil lewat API-nya
-                const judulBerita = $('#field_judul').val().trim();
-                const isiBerita   = (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.field_isi)
+                const judulagenda = $('#field_judul').val().trim();
+                const isiagenda   = (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.field_isi)
                                     ? CKEDITOR.instances.field_isi.getData().trim()
                                     : $('#field_isi').val().trim();
-                const sumberBerita = $('#field_sumber').val().trim();
+                const sumberagenda = $('#field_sumber').val().trim();
                 const photo        = $('#field_photo')[0].files[0];
 
                 // --- VALIDASI LOKAL ---
                 let valid = true;
 
-                if (!judulBerita) {
-                    setFieldError('judul', 'Judul berita wajib diisi');
+                if (!judulagenda) {
+                    setFieldError('judul', 'Judul agenda wajib diisi');
                     valid = false;
                 }
 
-                if (!isiBerita) {
-                    setFieldError('isi', 'Isi berita wajib diisi');
+                if (!isiagenda) {
+                    setFieldError('isi', 'Isi agenda wajib diisi');
                     // Tandai wrapper CKEditor jika ada
                     if (typeof CKEDITOR !== 'undefined') {
                         const ckFrame = $('#cke_field_isi');
@@ -503,8 +503,8 @@
                     valid = false;
                 }
 
-                if (!sumberBerita) {
-                    setFieldError('sumber', 'Sumber berita wajib diisi');
+                if (!sumberagenda) {
+                    setFieldError('sumber', 'Sumber agenda wajib diisi');
                     valid = false;
                 }
 
@@ -517,9 +517,9 @@
 
                 // --- BUILD FormData ---
                 const formData = new FormData();
-                formData.append('judul',  judulBerita);
-                formData.append('isi',    isiBerita);
-                formData.append('sumber', sumberBerita);
+                formData.append('judul', judulagenda);
+                formData.append('isi', isiagenda);
+                formData.append('sumber', sumberagenda);
 
                 if (photo) formData.append('photo', photo);
 
@@ -553,7 +553,7 @@
                             setFieldError(key, messages[0]);
                         });
 
-                        SystemToast('danger', (xhr.responseJSON && (xhr.responseJSON.note || xhr.responseJSON.message)) || 'Gagal menyimpan data');
+                        SystemToast('danger', (xhr.responseJSON && (xhr.responseJSON.note || xhr.responseJSON.message)) || 'Gagal menyimpan data' );
                     },
 
                     complete: function () {
@@ -640,7 +640,7 @@
 
                     return '<div class="row bg_data_page">'
                         + '<div class="col-md-12 bg_list_post">'
-                        + `<div class="image"><img src="${getPhotoUrl(item.tumb)}" alt="Berita" onerror="this.onerror=null;this.src='/image/setting/no_image.png';" > </div>`
+                        + `<div class="image"><img src="${getPhotoUrl(item.tumb)}" alt="agenda" onerror="this.onerror=null;this.src='/image/setting/no_image.png';" > </div>`
                         + '<div class="det_post">'
                         + '<div class="title_list">' + (item.judul || '-') + '</div>'
                         + '<div class="date_list"><i class="fa fa-clock-o"></i> ' + formatTanggal(item.created_at) + '</div>'

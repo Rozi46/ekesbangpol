@@ -21,7 +21,7 @@ class ApiSettings
             return response()->json(['status_message' => 'error','note' => 'Data user tidak valid'], 401);   
         }
 
-        $results['data_setting'] = Setting::find(1);        
+        $results['data_setting'] = Setting::where('code_data','ST20260521111536S')->where('code_company',$viewadmin->code_company)->first();        
         return response()->json(['status_message' => 'success','results' => $results], 201);
     } 
 
@@ -519,7 +519,7 @@ class ApiSettings
             return response()->json(['status_message' => 'error','note' => 'Tidak ada akses','results' => []], 403);
         }
 
-        $manualbook = Setting::find(1);
+        $manualbook = Setting::where('code_data','ST20260521111536S')->where('code_company',$viewadmin->code_company)->first();
 
         if (!$manualbook) {
             return response()->json(['status_message' => 'error','note' => 'Data tidak ditemukan','results' => [] ], 404);
@@ -549,7 +549,7 @@ class ApiSettings
             return response()->json(['status_message' => 'error','note' => $validator->errors()->first(),'results' => []], 422);
         }
 
-        $setting = Setting::find(1);
+        $setting = Setting::where('code_data','ST20260521111536S')->where('code_company',$viewadmin->code_company)->first();
         if (!$setting) {
             return response()->json(['status_message' => 'error','note' => 'Data tidak ditemukan','results' => []], 404);
         }

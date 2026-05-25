@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{Controller,SistemController,ActionController,ApiControllerPengaturan,UsersController,SettingsController,LeaveController,RankController,PositionController,EmployeesController,BeritaController,AgendaController,InfoPengumumanController};
+use App\Http\Controllers\{Controller,SistemController,ActionController,ApiControllerPengaturan,UsersController,SettingsController,LeaveController,RankController,PositionController,EmployeesController,BeritaController,AgendaController,InfoPengumumanController,SingelPageController};
 
 Route::get('/admin', function () {
     // return view('welcome']);
@@ -53,6 +53,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
 	Route::post('/statusinfopengumuman', [InfoPengumumanController::class, 'statusinfopengumuman']);
 	Route::delete('/deleteinfopengumuman', [InfoPengumumanController::class, 'deleteinfopengumuman']);
 	Route::post('/exportinfopengumuman', [InfoPengumumanController::class, 'exportinfopengumuman']);
+	// Singel Page
+	Route::get('/datavisimisi',[SingelPageController::class, 'datavisimisi']);	
+	Route::get('/viewvisimisi',[SingelPageController::class, 'viewvisimisi']);
+	Route::put('/updatevisimisi',[SingelPageController::class, 'updatevisimisi']);
+	Route::get('/datatentang', [SingelPageController::class, 'datatentang']);
+	Route::get('/viewtentang',[SingelPageController::class, 'viewtentang']);
+	Route::put('/updatetentang',[SingelPageController::class, 'updatetentang']);
+	Route::get('/datatugasfungsi',[SingelPageController::class, 'datatugasfungsi']);
+	Route::get('/viewtugasfungsi',[SingelPageController::class, 'viewtugasfungsi']);
+	Route::put('/updatetugasfungsi',[SingelPageController::class, 'updatetugasfungsi']);
+	Route::get('/datastrukturorganisasi',[SingelPageController::class, 'datastrukturorganisasi']);
+	Route::get('/viewstrukturorganisasi',[SingelPageController::class, 'viewstrukturorganisasi']);
+	Route::put('/updatestrukturorganisasi',[SingelPageController::class, 'updatestrukturorganisasi']);
+	Route::get('/dataalamatkontak',[SingelPageController::class, 'dataalamatkontak']);
+	Route::get('/viewalamatkontak',[SingelPageController::class, 'viewalamatkontak']);
+	Route::put('/updatealamatkontak',[SingelPageController::class, 'updatealamatkontak']);
 
 	// Pegawai
 	Route::get('/listpegawai',[EmployeesController::class, 'listpegawai']);

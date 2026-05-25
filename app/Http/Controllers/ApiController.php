@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 require '../vendor/autoload.php';
 
 use App\Http\Controllers\Controller;
-use App\Models\{Setting, Company, User, LevelAdmin, ListAkses, Activity, Atlet, Club, Event, Result, Registrasi, KelompokUmur, Heat};
+use App\Models\{Company, User, LevelAdmin, ListAkses, Activity};
 use Illuminate\Http\{Request, UploadedFile, Response};
 use Illuminate\Support\Facades\{Hash, Validator, File, Http, Route, Session, Auth, DB, Lang};
 use Illuminate\Support\{Carbon, Str};

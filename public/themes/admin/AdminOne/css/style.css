@@ -1267,6 +1267,13 @@ button:disabled {
     overflow:hidden;
     transition:.3s ease;
 }
+.preview-struktur{
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    border-radius: 20px;
+    background: var(--white);
+}
 
 .btn-change-photo{
     width:42px;

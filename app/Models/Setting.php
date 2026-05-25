@@ -9,16 +9,11 @@ class Setting extends Model
     protected $table = 'db_setting';
     protected $fillable = [
         'id',
-        'user_database',
-        'password_database',
-        'host_database',
-        'database_name',
-        'penyimpanan_excel',
-        'backup_database',
-        'backup_database_name',
-        'printer_kasir',
-        'report_dsn',
+        'code_data',
         'manual_book',
+        'file_struktur_organisasi',
+        'kata_sambutan',
+        'code_company',
         'created_at',
         'updated_at'
     ];

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{Controller,SistemController,ActionController,ApiControllerPengaturan,UsersController,SettingsController,LeaveController,RankController,PositionController,EmployeesController,BeritaController,AgendaController,InfoPengumumanController,SingelPageController};
+use App\Http\Controllers\{Controller,SistemController,ActionController,ApiControllerPengaturan,UsersController,SettingsController,LeaveController,RankController,PositionController,EmployeesController,BeritaController,AgendaController,InfoPengumumanController,SingelPageController,ArsipController};
 
 Route::get('/admin', function () {
     // return view('welcome']);
@@ -26,6 +26,23 @@ Route::get('/admin/logout',[SistemController::class, 'logout'])->name('logout');
 Route::get('/admin/dash',[SistemController::class, 'dash'])->name('dash');
 
 Route::prefix('admin')->name('admin.')->group(function () {
+	// Arsip
+	Route::get('/listarsip',[ArsipController::class, 'listarsip']);
+	Route::get('/datalistarsip', [ArsipController::class, 'datalistarsip']);
+	Route::post('/savearsip',[ArsipController::class, 'savearsip']);
+	Route::get('/viewarsip',[ArsipController::class, 'viewarsip']);
+	Route::put('/updatearsip', [ArsipController::class, 'updatearsip']);
+	Route::delete('/deletearsip', [ArsipController::class, 'deletearsip']);
+	Route::post('/exportarsip', [ArsipController::class, 'exportarsip']);
+	// KategoriArsip
+	Route::get('/kategoriarsip',[ArsipController::class, 'listkategoriarsip']);
+	Route::get('/datalistkategoriarsip', [ArsipController::class, 'datalistkategoriarsip']);
+	Route::post('/savekategoriarsip',[ArsipController::class, 'savekategoriarsip']);
+	Route::get('/viewkategoriarsip',[ArsipController::class, 'viewkategoriarsip']);
+	Route::put('/updatekategoriarsip', [ArsipController::class, 'updatekategoriarsip']);
+	Route::delete('/deletekategoriarsip', [ArsipController::class, 'deletekategoriarsip']);
+	Route::post('/exportkategoriarsip', [ArsipController::class, 'exportkategoriarsip']);
+
 	// Berita
 	Route::get('/databerita',[BeritaController::class, 'listberita']);
 	Route::get('/datalistberita', [BeritaController::class, 'datalistberita']);

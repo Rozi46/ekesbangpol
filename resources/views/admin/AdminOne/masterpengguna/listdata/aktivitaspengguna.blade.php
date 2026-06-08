@@ -55,7 +55,13 @@
 														?>
 													<tr>
 														<td style="text-align:center;">{{$no}}</td>
-														<td>{{ !empty($view_data['created_at']) ? \Carbon\Carbon::parse($view_data['created_at'])->translatedFormat('l, j F Y - H:i:s') : 'Belum ditentukan' }}</td>
+														<td>{{ !empty($view_data['created_at']) 
+																? \Carbon\Carbon::parse($view_data['created_at'])
+																	->timezone('Asia/Jakarta')
+																	->translatedFormat('l, j F Y - H:i:s')
+																: 'Belum ditentukan' 
+															}}
+														</td>
 														<td>{{ $view_data['user']['code_data'] ?? 'Belum ditentukan' }}</td>
 														<td>{{ $view_data['user']['full_name'] }}</td>
 														<td>{{ $view_data['activity'] ?? 'Belum ditentukan'}}</td>

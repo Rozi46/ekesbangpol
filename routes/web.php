@@ -42,6 +42,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
 	Route::put('/updatekategoriarsip', [ArsipController::class, 'updatekategoriarsip']);
 	Route::delete('/deletekategoriarsip', [ArsipController::class, 'deletekategoriarsip']);
 	Route::post('/exportkategoriarsip', [ArsipController::class, 'exportkategoriarsip']);
+	// ArsipTags
+	Route::get('/arsiptags',[ArsipController::class, 'listarsiptags']);
+	Route::get('/datalistarsiptags', [ArsipController::class, 'datalistarsiptags']);
+	Route::post('/savearsiptags',[ArsipController::class, 'savearsiptags']);
+	Route::get('/viewarsiptags',[ArsipController::class, 'viewarsiptags']);
+	Route::put('/updatearsiptags', [ArsipController::class, 'updatearsiptags']);
+	Route::delete('/deletearsiptags', [ArsipController::class, 'deletearsiptags']);
+	Route::post('/exportarsiptags', [ArsipController::class, 'exportarsiptags']);;
+	// KlasifikasiArsip
+	Route::get('/klasifikasiarsip',[ArsipController::class, 'listklasifikasiarsip']);
+	Route::get('/datalistklasifikasiarsip', [ArsipController::class, 'datalistklasifikasiarsip']);
+	Route::post('/saveklasifikasiarsip',[ArsipController::class, 'saveklasifikasiarsip']);
+	Route::get('/viewklasifikasiarsip',[ArsipController::class, 'viewklasifikasiarsip']);
+	Route::put('/updateklasifikasiarsip', [ArsipController::class, 'updateklasifikasiarsip']);
+	Route::delete('/deleteklasifikasiarsip', [ArsipController::class, 'deleteklasifikasiarsip']);
+	Route::post('/exportklasifikasiarsip', [ArsipController::class, 'exportklasifikasiarsip']);
 
 	// Berita
 	Route::get('/databerita',[BeritaController::class, 'listberita']);

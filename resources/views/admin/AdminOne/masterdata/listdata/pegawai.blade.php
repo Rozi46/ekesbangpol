@@ -93,7 +93,7 @@
                         <div class="row bg_data_page form_page content">
                             <div class="col-md-12 bg_form_page">
                                 <div class="form-group row form_input text-left">
-                                    <label class="col-sm-2 col-form-label">Nama Pegawai <span>*</span></label>
+                                    <label class="col-sm-2 col-form-label">Agama <span>*</span></label>
                                     <div class="col-sm-10 input">
                                         <select id="field_agama">
                                             <option value="" style="display:none;">Pilih Agama</option>

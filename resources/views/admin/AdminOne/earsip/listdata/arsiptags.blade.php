@@ -1,5 +1,5 @@
 @extends('admin.AdminOne.layout.assets')
-@section('title', 'Data Kategori Arsip')
+@section('title', 'Data Arsip Tag')
 
 @section('content')
     <div class="page_main">
@@ -8,7 +8,7 @@
 
                 {{-- HEADER --}}
                 <div class="col-md-12 bg_page_main hd" line="hd_action">
-                    <div class="col-md-12 hd_page_main" id="pageTitle">Data Kategori Arsip</div>
+                    <div class="col-md-12 hd_page_main" id="pageTitle">Data Arsip Tag</div>
                     <div class="col-md-12 bg_act_page_main">
                         <div class="row">
                             <div class="col-xl-12 col_act_page_main text-left" id="headerActions"></div>
@@ -33,8 +33,7 @@
                                         <tr>
                                             <th width="50" class="text-center">No</th>
                                             <th class="sortable" data-sort="code_data">Kode Data <i class="fa fa-sort"></i></th>
-                                            <th class="sortable" data-sort="nama_kategori">Kategori Arsip <i class="fa fa-sort"></i></th>
-                                            <th>Keterangan </th>
+                                            <th class="sortable" data-sort="nama_tag">Nama Tag <i class="fa fa-sort"></i></th>
                                             <th width="100" class="text-center"><i class="head fa fa-cog"></i></th>
                                         </tr>
                                     </thead>
@@ -62,8 +61,6 @@
                             </div>
                         </div>
                         <div class="row bg_data_page form_page content">
-
-                            {{-- Kode Data --}}
                             <div class="col-md-12 bg_form_page">
                                 <div class="form-group row form_input text-left">
                                     <label class="col-sm-2 col-form-label">Kode Data</label>
@@ -72,39 +69,20 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- Kategori Arsip --}}
                             <div class="col-md-12 bg_form_page">
                                 <div class="form-group row form_input text-left">
-                                    <label class="col-sm-2 col-form-label">Kategori Arsip <span>*</span></label>
+                                    <label class="col-sm-2 col-form-label">Nama Tag <span>*</span></label>
                                     <div class="col-sm-10 input">
-                                        <div class="field-wrapper" id="wrap_namakategori">
-                                            <input type="text" id="field_namakategori" placeholder="Masukkan kategori arsip...">
+                                        <div class="field-wrapper" id="wrap_namatag">
+                                            <input type="text" id="field_namatag" placeholder="Masukkan nama tag...">
                                         </div>
-                                        <div class="field-error-msg" id="err_namakategori">
+                                        <div class="field-error-msg" id="err_namatag">
                                             <i class="fa fa-info-circle"></i>
                                             <span></span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            {{-- Keterangan --}}
-                            <div class="col-md-12 bg_form_page">
-                                <div class="form-group row form_input text-left">
-                                    <label class="col-sm-2 col-form-label">Keterangan <span>*</span></label>
-                                    <div class="col-sm-10 input">
-                                        <div class="field-wrapper" id="wrap_keterangan">
-                                            <textarea id="field_keterangan" placeholder="Masukkan keterangan..."></textarea>
-                                        </div>
-                                        <div class="field-error-msg" id="err_keterangan">
-                                            <i class="fa fa-info-circle"></i>
-                                            <span></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                         <div class="row bg_data_page form_page content">
                             <div class="col-md-12 bg_form_page">
@@ -132,12 +110,8 @@
                                         <td id="view_code_data">-</td>
                                     </tr>
                                     <tr>
-                                        <th class="bg-light">Kategori Arsip</th>
-                                        <td id="view_namakategori">-</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bg-light">Keterangan</th>
-                                        <td id="view_keterangan">-</td>
+                                        <th class="bg-light">Nama Tag</th>
+                                        <td id="view_namatag">-</td>
                                     </tr>
                                     <tr>
                                         <th class="bg-light">Dibuat Pada</th>
@@ -153,7 +127,7 @@
                         <div class="row bg_data_page form_page content">
                             <div class="col-md-12 bg_form_page">
                                 <div class="form-group form_input text-left">
-                                    @if(($level_user['editkategoriarsip'] ?? 'No') === 'Yes')
+                                    @if(($level_user['editarsiptags'] ?? 'No') === 'Yes')
                                         <button type="button" class="btn btn-warning btn-sm" id="btnEditFromView">
                                             <i class="fa fa-edit"></i> Ubah Data
                                         </button>
@@ -179,18 +153,18 @@
             * CONFIG
             * ========================================================= */
             const routes = {
-                list   : "{{ url('/admin/datalistkategoriarsip') }}",
-                store  : "{{ url('/admin/savekategoriarsip') }}",
-                detail : "{{ url('/admin/viewkategoriarsip') }}",
-                update : "{{ url('/admin/updatekategoriarsip') }}",
-                delete : "{{ url('/admin/deletekategoriarsip') }}"
+                list   : "{{ url('/admin/datalistarsiptags') }}",
+                store  : "{{ url('/admin/savearsiptags') }}",
+                detail : "{{ url('/admin/viewarsiptags') }}",
+                update : "{{ url('/admin/updatearsiptags') }}",
+                delete : "{{ url('/admin/deletearsiptags') }}"
             };
 
             const action = {
-                new    : {{ (($level_user['newkategoriarsip']    ?? 'No') === 'Yes') ? 'true' : 'false' }},
-                edit   : {{ (($level_user['editkategoriarsip']   ?? 'No') === 'Yes') ? 'true' : 'false' }},
-                delete : {{ (($level_user['deletekategoriarsip'] ?? 'No') === 'Yes') ? 'true' : 'false' }},
-                export : {{ (($level_user['exportkategoriarsip'] ?? 'No') === 'Yes') ? 'true' : 'false' }}
+                new    : {{ (($level_user['newarsiptags']    ?? 'No') === 'Yes') ? 'true' : 'false' }},
+                edit   : {{ (($level_user['editarsiptags']   ?? 'No') === 'Yes') ? 'true' : 'false' }},
+                delete : {{ (($level_user['deletearsiptags'] ?? 'No') === 'Yes') ? 'true' : 'false' }},
+                export : {{ (($level_user['exportarsiptags'] ?? 'No') === 'Yes') ? 'true' : 'false' }}
             };
 
             $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
@@ -246,7 +220,7 @@
             }
 
             function renderHeader() {
-                let title   = 'Data Kategori Arsip';
+                let title   = 'Data Arsip Tag';
                 let buttons = `<button type="button" class="btn btn-secondary" onclick="BackPage()">
                                 <i class="fa fa-chevron-left"></i> Kembali
                             </button> `;
@@ -260,14 +234,14 @@
                         }
                         if (action.export) {
                             buttons += `<button type="button" class="btn btn-info"
-                                            onclick="exportdata({url:'/admin/exportkategoriarsip', btn:this})">
+                                            onclick="exportdata({url:'/admin/exportarsiptags', btn:this})">
                                             <i class="fa fa-download"></i> Export Data
                                         </button>`;
                         }
                         break;
-                    case 'add'  : title = 'Tambah Data Kategori Arsip'; break;
-                    case 'edit' : title = 'Ubah Data Kategori Arsip';   break;
-                    case 'view' : title = 'Detail Data Kategori Arsip';  break;
+                    case 'add'  : title = 'Tambah Data Arsip Tag'; break;
+                    case 'edit' : title = 'Ubah Data Arsip Tag';   break;
+                    case 'view' : title = 'Detail Data Arsip Tag';  break;
                 }
 
                 $('#pageTitle').text(title);
@@ -283,8 +257,7 @@
             * ========================================================= */
             function resetForm() {
                 $('#field_code_data').val('');
-                $('#field_namakategori').val('');
-                $('#field_keterangan').val('');
+                $('#field_namatag').val('');
                 clearFormErrors();
             }
 
@@ -331,7 +304,7 @@
             function loadDetail(code, target) {
                 if (target === 'view') {
                     const loading = '<i class="fa fa-spinner fa-spin"></i> Memuat...';
-                    $('#view_code_data, #view_namakategori, #view_keterangan, #view_created_at, #view_updated_at')
+                    $('#view_code_data, #view_namatag, #view_created_at, #view_updated_at')
                         .html(loading);
                 }
 
@@ -343,18 +316,16 @@
                         const d = res.data;
 
                         if (target === 'view') {
-                            $('#view_code_data').text(d.code_data       ?? '-');
-                            $('#view_namakategori').text(d.nama_kategori ?? '-');
-                            $('#view_keterangan').text(d.keterangan      ?? '-');
+                            $('#view_code_data').text(d.code_data ?? '-');
+                            $('#view_namatag').text(d.nama_tag ?? '-');
                             $('#view_created_at').text(formatTanggal(d.created_at));
                             $('#view_updated_at').text(formatTanggal(d.updated_at));
                             $('#btnEditFromView').data('code', d.code_data);
                         }
 
                         if (target === 'edit') {
-                            $('#field_code_data').val(d.code_data        ?? '');
-                            $('#field_namakategori').val(d.nama_kategori  ?? '');
-                            $('#field_keterangan').val(d.keterangan       ?? '');
+                            $('#field_code_data').val(d.code_data   ?? '');
+                            $('#field_namatag').val(d.nama_tag      ?? '');
                         }
                     },
                     error: function () {
@@ -369,17 +340,11 @@
             $('#btnSaveForm').on('click', function () {
                 clearFormErrors();
 
-                const namakategori = $('#field_namakategori').val().trim();
-                const keterangan   = $('#field_keterangan').val().trim();
+                const namatag = $('#field_namatag').val().trim();
                 let   hasError     = false;
 
-                if (!namakategori) {
-                    setFieldError('wrap_namakategori', 'err_namakategori', 'Kategori arsip wajib diisi.');
-                    hasError = true;
-                }
-
-                if (!keterangan) {
-                    setFieldError('wrap_keterangan', 'err_keterangan', 'Keterangan wajib diisi.');
+                if (!namatag) {
+                    setFieldError('wrap_namatag', 'err_namatag', 'Nama tag wajib diisi.');
                     hasError = true;
                 }
 
@@ -390,8 +355,7 @@
                 const method  = isEdit ? 'PUT' : 'POST';
 
                 const payload = {
-                    nama_kategori : namakategori,
-                    keterangan    : keterangan
+                    nama_tag : namatag
                 };
 
                 if (isEdit && state.currentCode) {
@@ -414,11 +378,8 @@
                     error: function (xhr) {
                         const errors = xhr.responseJSON?.errors ?? {};
 
-                        if (errors.nama_kategori) {
-                            setFieldError('wrap_namakategori', 'err_namakategori', errors.nama_kategori[0]);
-                        }
-                        if (errors.keterangan) {
-                            setFieldError('wrap_keterangan', 'err_keterangan', errors.keterangan[0]);
+                        if (errors.nama_tag) {
+                            setFieldError('wrap_namatag', 'err_namatag', errors.nama_tag[0]);
                         }
 
                         SystemToast('danger',
@@ -471,7 +432,7 @@
 
             function renderError() {
                 $('#DataTableBody').html(
-                    `<tr><td colspan="5" class="text-danger text-center">Gagal memuat data</td></tr>`
+                    `<tr><td colspan="4" class="text-danger text-center">Gagal memuat data</td></tr>`
                 );
             }
 
@@ -494,9 +455,8 @@
                     html += `
                         <tr>
                             <td class="text-center">${res.from + index}</td>
-                            <td>${item.code_data     ?? '-'}</td>
-                            <td>${item.nama_kategori ?? '-'}</td>
-                            <td>${item.keterangan    ?? '-'}</td>
+                            <td>${item.code_data    ?? '-'}</td>
+                            <td>${item.nama_tag     ?? '-'}</td>
                             <td class="text-center">
                                 <div class="dropdown dropleft">
                                     <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
@@ -514,7 +474,7 @@
                                         </a>
                                         <a class="dropdown-item delete-data ${deleteCls}" style="cursor:pointer;"
                                         data-code="${item.code_data}"
-                                        data-name="${item.nama_kategori ?? ''}" ${deleteAttr}>
+                                        data-name="${item.nama_tag ?? ''}" ${deleteAttr}>
                                             Hapus Data
                                         </a>
                                     </div>

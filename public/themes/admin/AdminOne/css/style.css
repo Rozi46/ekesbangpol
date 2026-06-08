@@ -1313,6 +1313,70 @@ button:disabled {
 }
 
 /* =========================================================
+ * Validasi form
+ * ========================================================= */
+.field-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.field-wrapper input,
+.field-wrapper textarea,
+.field-wrapper select {
+    width: 100%;
+}
+
+.field-error-msg {
+    display: none;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 12px;
+    margin-top: 4px;
+    line-height: 1.4;
+    color: #e0294a !important;
+}
+
+.field-error-msg * {
+    color: #e0294a !important;
+}
+
+.field-wrapper.is-invalid ~ .field-error-msg {
+    display: flex !important;
+}
+
+.field-error-msg .fa-info-circle {
+    font-size: 13px !important;
+    margin-top: 1px;
+    flex-shrink: 0;
+    color: #e0294a !important;
+}
+
+.field-error-msg span {
+    color: #e0294a !important;
+}
+
+/* .field-wrapper.is-invalid input,
+.field-wrapper.is-invalid textarea,
+.field-wrapper.is-invalid select {
+    border: 1px solid #e0294a !important;
+    background-color: #fff9f9 !important;
+    box-shadow: none !important;
+}
+
+.field-error-msg {
+    display: none;
+    color: #e0294a;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.field-error-msg i,
+.field-error-msg span {
+    color: #e0294a;
+} */
+
+/* =========================================================
  * CSS Select2 agar tidak hitam
  * ========================================================= */
 .select2-container--default .select2-selection--single{

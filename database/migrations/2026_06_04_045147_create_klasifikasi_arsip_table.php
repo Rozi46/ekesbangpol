@@ -11,15 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('db_arsip_tags', function (Blueprint $table) {
+        Schema::create('db_klasifikasi_arsip', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('code_data', 100)->unique();
-            $table->string('nama_tag', 100)->unique();
+            $table->string('code_klasifikasi', 100);
+            $table->string('nama_klasifikasi', 200);
+            $table->text('deskripsi');
+            $table->integer('retensi_aktif')->default(0);
+            $table->integer('retensi_inaktif')->default(0);
             $table->string('code_company', 100);
             $table->timestamps();
 
-            $table->index('code_data', 'idx_arsiptags_code_data');
-            $table->index('code_company', 'idx_arsiptags_company');
+            $table->index('code_data', 'idx_klasifikasiarsip_code_data');
+            $table->index('code_company', 'idx_klasifikasiarsip_company');
         });
     }
 
@@ -28,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('db_arsip_tags');
+        Schema::dropIfExists('db_klasifikasi_arsip');
     }
 };

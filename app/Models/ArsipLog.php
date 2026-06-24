@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ArsipLog extends Model
 {
-    protected $table = 'db_arsip_log';
+    protected $table = 'db_arsip_logs';
     protected $fillable = [
         'id',
         'code_data',

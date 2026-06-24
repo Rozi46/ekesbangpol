@@ -382,11 +382,7 @@
                             setFieldError('wrap_namatag', 'err_namatag', errors.nama_tag[0]);
                         }
 
-                        SystemToast('danger',
-                            xhr.responseJSON?.note    ||
-                            xhr.responseJSON?.message ||
-                            'Gagal menyimpan data'
-                        );
+                        SystemToast('danger', xhr.responseJSON?.note || xhr.responseJSON?.message || 'Gagal menyimpan data');
                     },
                     complete: function () {
                         btn.prop('disabled', false).html('<i class="fa fa-save"></i> Simpan');
@@ -586,18 +582,10 @@
                 const modal = $('div[data-model="confirmasi"]');
 
                 modal.modal({ backdrop: false });
-                modal.find('.modal-body').html(
-                    `<div class="alert alert-danger">
-                        Anda yakin ingin menghapus data <b>${name}</b>?
-                    </div>`
-                );
+                modal.find('.modal-body').html(`<div class="alert alert-danger">Anda yakin ingin menghapus data <b>${name}</b>?</div>`);
 
                 $('button[btn-action="action-confirmasi"]').remove();
-                $('button[btn-action="close-confirmasi"]').before(
-                    `<button type="button" class="btn btn-primary btn-sm" btn-action="action-confirmasi">
-                        Yakin
-                    </button>`
-                );
+                $('button[btn-action="close-confirmasi"]').before(`<button type="button" class="btn btn-primary btn-sm" btn-action="action-confirmasi">Yakin</button>`);
 
                 $(document)
                     .off('click', '[btn-action="action-confirmasi"]')

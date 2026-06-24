@@ -27,13 +27,14 @@ Route::get('/admin/dash',[SistemController::class, 'dash'])->name('dash');
 
 Route::prefix('admin')->name('admin.')->group(function () {
 	// Arsip
-	Route::get('/listarsip',[ArsipController::class, 'listarsip']);
+	Route::get('/dataarsip',[ArsipController::class, 'listarsip']);
 	Route::get('/datalistarsip', [ArsipController::class, 'datalistarsip']);
 	Route::post('/savearsip',[ArsipController::class, 'savearsip']);
 	Route::get('/viewarsip',[ArsipController::class, 'viewarsip']);
-	Route::put('/updatearsip', [ArsipController::class, 'updatearsip']);
+	Route::post('/updatearsip', [ArsipController::class, 'updatearsip']);
 	Route::delete('/deletearsip', [ArsipController::class, 'deletearsip']);
 	Route::post('/exportarsip', [ArsipController::class, 'exportarsip']);
+	Route::get('/listopkategoriarsip',[ArsipController::class, 'listopkategoriarsip']);
 	// KategoriArsip
 	Route::get('/kategoriarsip',[ArsipController::class, 'listkategoriarsip']);
 	Route::get('/datalistkategoriarsip', [ArsipController::class, 'datalistkategoriarsip']);

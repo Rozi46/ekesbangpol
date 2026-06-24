@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\{Setting, Company, User, LevelAdmin, ListAkses, Activity, KategoriArsip, ArsipTag, KlasifikasiArsip};
+use App\Models\{Setting, Company, User, LevelAdmin, ListAkses, Activity, KategoriArsip, ArsipTag, KlasifikasiArsip, Arsip, ArsipLog};
 use Illuminate\Http\{Request, UploadedFile, Response};
-use Illuminate\Support\Facades\{Hash, Validator, File, Http, Route, Session, Auth, DB, Lang};
+use Illuminate\Support\Facades\{Hash, Validator, File, Http, Route, Session, Auth, DB, Lang, Storage};
 use Illuminate\Support\{Carbon, Str};
 use Illuminate\Database\Query\Builder;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -12,6 +12,508 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ApiArsip
 {
+    // isi select
+        public function listopkategoriarsip(Request $request)
+        {
+            $admin = User::where('id', $request->u)->where('key_token', $request->token)->first();
+            if (!$admin) {
+                return response()->json(['status_message' => 'error','note' => 'User tidak valid'], 401);
+            }
+
+            $menus = ['dataarsip', 'newarsip'];
+            $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
+
+            $hasNoAccess = collect($menus)->contains(function ($menu) use ($access) {
+                return ($access[$menu] ?? 'No') === 'No';
+            });
+
+            if ($hasNoAccess) {
+                return response()->json(['status_message' => 'error','note' => 'Tidak ada akses','results' => []], 403);
+            }  
+
+            // $results = KategoriArsip::where('code_company',$admin->code_company)->orderBy('created_at', 'ASC')->get();
+            $search = trim($request->search);
+
+            $results = KategoriArsip::query()
+                ->where('code_company', $admin->code_company)
+                ->when($search, function ($query) use ($search) {
+                    $query->where(function ($q) use ($search) {
+                        $q->where('nama_kategori', 'Ilike', "%{$search}%")
+                        ->orWhere('code_data', 'Ilike', "%{$search}%");
+                    });
+                })
+
+                ->orderBy('nama_kategori')
+                ->get(['code_data','nama_kategori']);
+
+            return response()->json(['status_message' => 'success','results' => $results], 201);
+        }
+    // end isi select
+
+    // Arsip    
+    public function dataarsip(Request $request)
+    {
+        $admin = User::where('id', $request->u)->where('key_token', $request->token)->first();
+        if (!$admin) {
+            return response()->json(['status_message' => 'error','note' => 'User tidak valid'], 401);
+        }
+
+        $menus = ['earsip', 'dataarsip'];
+        $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
+
+        $hasNoAccess = collect($menus)->contains(function ($menu) use ($access) {
+            return ($access[$menu] ?? 'No') === 'No';
+        });
+
+        if ($hasNoAccess) {
+            return response()->json(['status_message' => 'error','note' => 'Tidak ada akses','results' => []], 403);
+        } 
+
+        $query = Arsip::with('kategori')
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $search = "%{$request->search}%";
+
+                $q->where(function ($query) use ($search) {
+                    $query->where('judul', 'ILIKE', $search)
+                        ->orWhere('code_data', 'ILIKE', $search)
+                        ->orWhere('deskripsi', 'ILIKE', $search)
+                        ->orWhereHas('kategori', function ($kategori) use ($search) {
+                            $kategori->where('nama_kategori', 'ILIKE', $search);
+                        });
+                });
+            });     
+
+        $allowedSort = ['created_at', 'code_data', 'nama_kategori', 'judul', 'tanggal_dokumen', 'akses'];
+        $sortBy = in_array($request->sort_by, $allowedSort) ? $request->sort_by : 'created_at';
+        $sortOrder = $request->sort_order === 'desc' ? 'desc' : 'asc';
+
+        $data = $query
+            ->orderBy($sortBy, $sortOrder)
+            ->paginate((int) $request->per_page);
+
+        return response()->json(['status_message'=>'success','note'=>'Proses data berhasil','results'=> $data],200);
+    }
+
+    // public function savearsip(Request $request)
+    // {
+    //     date_default_timezone_set('Asia/Jakarta');
+
+    //     $admin = User::where('id', $request->u)->where('key_token', $request->token)->first();
+    //     if (!$admin) {
+    //         return response()->json(['status_message' => 'error', 'note' => 'Data user tidak valid'], 401);
+    //     }
+
+    //     $menus  = ['dataarsip', 'newarsip'];
+    //     $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
+
+    //     $hasNoAccess = collect($menus)->contains(fn($m) => ($access[$m] ?? 'No') === 'No');
+    //     if ($hasNoAccess) {
+    //         return response()->json(['status_message' => 'error', 'note' => 'Tidak ada akses', 'results' => []], 403);
+    //     }
+
+    //     $validator = Validator::make($request->all(), [
+    //         'code_kategori'     => 'required|string|max:200',
+    //         'judul'             => 'required|string|max:200',
+    //         'tanggal_dokumen'   => 'required|string|max:200',
+    //         'file_path'         => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:5120', // 5 MB
+    //         'deskripsi'         => 'required|string|max:200',
+    //         'akses'             => 'required|string|max:200',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json(['status_message' => 'error', 'note' => $validator->errors()->first(), 'results' => []], 422);
+    //     }
+
+    //     try {
+    //         DB::beginTransaction();
+    //         $codeData  = "ARS" . ltrim(now()->format('YmdHis') . Str::random(1), '0');
+
+    //         $arsip = Arsip::create([
+    //             'id'                => Str::uuid(),
+    //             'code_data'         => $codeData,
+    //             'code_kategori'     => $request->code_kategori,
+    //             'judul'             => $request->judul,
+    //             'tanggal_dokumen'   => $request->tanggal_dokumen,
+    //             'deskripsi'         => $request->deskripsi,
+    //             'akses'             => $request->akses,
+    //             'file_path'         => $request->file_path,
+    //             'code_user'         => $admin->code_data,
+    //             'code_company'      => $admin->code_company,
+    //         ]);
+
+    //         ArsipLog::create([
+    //             'id'           => Str::uuid(),
+    //             'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
+    //             'code_arsip'   => $codeData,
+    //             'code_user'    => $admin->code_data,
+    //             'aksi'         => "Tambah data arsip [{$request->judul} - {$codeData}]",
+    //             'code_company' => $admin->code_company,
+    //         ]);
+
+    //         Activity::create([
+    //             'id'           => Str::uuid(),
+    //             'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
+    //             'code_user'    => $admin->code_data,
+    //             'activity'     => "Tambah data arsip [{$request->judul} - {$codeData}]",
+    //             'code_company' => $admin->code_company,
+    //         ]);
+
+    //         DB::commit();
+    //         return response()->json(['status_message' => 'success', 'note' => 'Data berhasil disimpan', 'results' => $arsip], 201);
+
+    //     } catch (\Throwable $e) {
+    //         DB::rollBack();
+    //         return response()->json(['status_message' => 'error', 'note' => 'Terjadi kesalahan: ' . $e->getMessage(), 'results' => []], 500);
+    //     }
+    // }
+
+    public function savearsip(Request $request)
+    {
+        date_default_timezone_set('Asia/Jakarta');
+
+        $admin = User::where('id', $request->u)->where('key_token', $request->token)->first();
+
+        if (!$admin) {
+            return response()->json(['status_message' => 'error', 'note' => 'Data user tidak valid'], 401);
+        }
+
+        $menus  = ['dataarsip', 'newarsip'];
+        $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
+
+        $hasNoAccess = collect($menus)->contains(fn($m) => ($access[$m] ?? 'No') === 'No');
+
+        if ($hasNoAccess) {
+            return response()->json(['status_message' => 'error','note' => 'Tidak ada akses','results' => []], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'code_kategori'   => 'required|string|max:200',
+            'judul'           => 'required|string|max:200',
+            'tanggal_dokumen' => 'required|string|max:200',
+            'deskripsi'       => 'required|string|max:200',
+            'akses'           => 'required|string|max:200',
+            'file_path'       => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:5120',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status_message' => 'error','note' => $validator->errors()->first(),'results' => [] ], 422);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // =====================================================
+            // UPLOAD FILE ke storage/app/public/arsip
+            // path yang tersimpan di DB: "arsip/namafile.pdf"
+            // akses publik via: /storage/arsip/namafile.pdf
+            // =====================================================
+            // $uploadedPath = $request->file('file_path')->store('arsip', 'public');
+
+            $file = $request->file('file_path');
+            $fileName = Str::slug($request->judul) . '_' . now()->format('YmdHis') . '.' . $file->getClientOriginalExtension();
+            $uploadedPath = $file->storeAs('arsip', $fileName, 'public');
+
+            if (!$uploadedPath) {
+                DB::rollBack();
+                return response()->json(['status_message' => 'error','note' => 'Gagal mengupload file','results' => []], 500);
+            }
+
+            $codeData = 'ARS' . ltrim(now()->format('YmdHis') . Str::random(1), '0');
+
+            $arsip = Arsip::create([
+                'id'              => Str::uuid(),
+                'code_data'       => $codeData,
+                'code_kategori'   => $request->code_kategori,
+                'judul'           => $request->judul,
+                'tanggal_dokumen' => $request->tanggal_dokumen,
+                'deskripsi'       => $request->deskripsi,
+                'akses'           => $request->akses,
+                'file_path'       => $uploadedPath, // ← "arsip/namafile.pdf"
+                'code_user'       => $admin->code_data,
+                'code_company'    => $admin->code_company,
+            ]);
+
+            ArsipLog::create([
+                'id'           => Str::uuid(),
+                'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
+                'code_arsip'   => $codeData,
+                'code_user'    => $admin->code_data,
+                'aksi'         => "Tambah data arsip [{$request->judul} - {$codeData}]",
+                'code_company' => $admin->code_company,
+            ]);
+
+            Activity::create([
+                'id'           => Str::uuid(),
+                'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
+                'code_user'    => $admin->code_data,
+                'activity'     => "Tambah data arsip [{$request->judul} - {$codeData}]",
+                'code_company' => $admin->code_company,
+            ]);
+
+            DB::commit();
+            return response()->json(['status_message' => 'success','note' => 'Data berhasil disimpan','results' => $arsip], 201);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            // Hapus file yang sudah terupload jika DB gagal
+            if (!empty($uploadedPath) && Storage::disk('public')->exists($uploadedPath)) {
+                Storage::disk('public')->delete($uploadedPath);
+            }
+
+            return response()->json(['status_message' => 'error','note' => 'Terjadi kesalahan: ' . $e->getMessage(),'results' => []], 500);
+        }
+    }
+
+    public function viewarsip(Request $request)
+    {
+        $admin = User::where('id', $request->u)->where('key_token', $request->token)->first();
+        if (!$admin) {
+            return response()->json(['status_message' => 'error', 'note' => 'User tidak valid'], 401);
+        }
+
+        $menus  = ['kategoriarsip'];
+        $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
+
+        $hasNoAccess = collect($menus)->contains(fn($m) => ($access[$m] ?? 'No') === 'No');
+        if ($hasNoAccess) {
+            return response()->json(['status_message' => 'error', 'note' => 'Tidak ada akses', 'results' => []], 403);
+        }
+
+        $arsip = Arsip::with('kategori')->where('code_data', $request->code_data)->where('code_company', $admin->code_company)->first();
+        if (!$arsip) {
+            return response()->json(['status_message' => 'error', 'note' => 'Data tidak ditemukan', 'results' => []], 404);
+        }
+
+        return response()->json(['status_message' => 'success','note' => 'Proses data berhasil','results' => ['arsip' => $arsip, 'count_used' => 0]], 200);
+    }
+
+    public function editarsip(Request $request)
+    {
+        $admin = User::where('id', $request->u)->where('key_token', $request->token)->first();
+        if (!$admin) {
+            return response()->json(['status_message' => 'error', 'note' => 'Data user tidak valid'], 401);
+        }
+
+        $menus  = ['kategoriarsip', 'editkategoriarsip'];
+        $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
+
+        $hasNoAccess = collect($menus)->contains(fn($m) => ($access[$m] ?? 'No') === 'No');
+        if ($hasNoAccess) {
+            return response()->json(['status_message' => 'error', 'note' => 'Tidak ada akses', 'results' => []], 403);
+        }
+
+        $arsip = Arsip::where('code_data', $request->code_data)->where('code_company', $admin->code_company)->first();
+        if (!$arsip) {
+            return response()->json(['status_message' => 'error', 'note' => 'Data tidak ditemukan', 'results' => []], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'code_kategori'   => 'required|string|max:200',
+            'judul'           => 'required|string|max:200',
+            'tanggal_dokumen' => 'required|string|max:200',
+            'deskripsi'       => 'required|string|max:200',
+            'akses'           => 'required|string|max:200',
+            'file_path'       => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:5120',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status_message' => 'error','note' => $validator->errors()->first(),'results' => [] ], 422);
+        }
+
+        // try {
+        //     DB::beginTransaction();
+
+        //     // Upload file baru jika ada
+        //     if ($request->hasFile('file_path')) {
+        //         $uploaded = $request->file('file_path')->store('arsip', 'public');
+        //         if (!$uploaded) {
+        //             throw new \Exception('Gagal upload file.');
+        //         }
+        //         $newFile = $uploaded;
+        //     }
+            
+        //     $uploadedPath = $request->file('file_path')->store('arsip', 'public');
+
+        //     if (!$uploadedPath) {
+        //         DB::rollBack();
+        //         return response()->json(['status_message' => 'error','note' => 'Gagal mengupload file','results' => []], 500);
+        //     }
+
+        //     $arsip->update([
+        //         'code_kategori'   => $request->code_kategori,
+        //         'judul'           => $request->judul,
+        //         'tanggal_dokumen' => $request->tanggal_dokumen,
+        //         'deskripsi'       => $request->deskripsi,
+        //         'akses'           => $request->akses,
+        //         'file_path'       => $uploadedPath, // ← "arsip/namafile.pdf"
+        //         'code_user'       => $admin->code_data,
+        //         'code_company'    => $admin->code_company,
+        //     ]);
+
+        //     ArsipLog::create([
+        //         'id'           => Str::uuid(),
+        //         'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
+        //         'code_arsip'   => $codeData,
+        //         'code_user'    => $admin->code_data,
+        //         'aksi'         => "Ubah data arsip [{$arsip->judul} - {$arsip->judul}]",
+        //         'code_company' => $admin->code_company,
+        //     ]);
+
+        //     Activity::create([
+        //         'id'           => Str::uuid(),
+        //         'code_data'    => ltrim(now()->format('YmdHis') . Str::random(1), '0'),
+        //         'code_user'    => $admin->code_data,
+        //         'activity'     => "Ubah data arsip [{$arsip->judul} - {$arsip->judul}]",
+        //         'code_company' => $admin->code_company,
+        //     ]);
+
+        //     DB::commit();
+        //     return response()->json(['status_message' => 'success', 'note' => 'Data berhasil disimpan', 'results' => []]);
+
+        // } catch (\Throwable $e) {
+        //     DB::rollBack();
+        //     return response()->json(['status_message' => 'error', 'note' => 'Terjadi kesalahan: ' . $e->getMessage(), 'results' => []], 500);
+        // }
+
+        try {
+            DB::beginTransaction();
+
+            $oldTitle = $arsip->judul;
+            $oldFile  = $arsip->file_path;
+
+            $newFile = $oldFile;
+
+            // Upload file baru jika ada
+            if ($request->hasFile('file_path')) {
+                // $uploaded = $request->file('file_path')->store('arsip', 'public');
+                $file = $request->file('file_path');
+                $fileName = Str::slug($request->judul) . '_' . now()->format('YmdHis') . '.' . $file->getClientOriginalExtension();
+                $uploaded = $file->storeAs('arsip', $fileName, 'public');
+                if (!$uploaded) {
+                    throw new \Exception('Gagal upload file.');
+                }
+                $newFile = $uploaded;
+            }
+
+            $arsip->update([
+                'code_kategori'   => $request->code_kategori,
+                'judul'           => $request->judul,
+                'tanggal_dokumen' => $request->tanggal_dokumen,
+                'deskripsi'       => $request->deskripsi,
+                'akses'           => $request->akses,
+                'file_path'       => $newFile,
+                'code_user'       => $admin->code_data,
+                'code_company'    => $admin->code_company,
+            ]);
+
+            ArsipLog::create([
+                'id'           => Str::uuid(),
+                'code_data'    => ltrim(now()->format('YmdHis').Str::random(1),'0'),
+                'code_arsip'   => $arsip->code_data,
+                'code_user'    => $admin->code_data,
+                'aksi'         => "Ubah data arsip [{$oldTitle} - {$request->judul}]",
+                'code_company' => $admin->code_company,
+            ]);
+
+            Activity::create([
+                'id'           => Str::uuid(),
+                'code_data'    => ltrim(now()->format('YmdHis').Str::random(1),'0'),
+                'code_user'    => $admin->code_data,
+                'activity'     => "Ubah data arsip [{$oldTitle} - {$request->judul}]",
+                'code_company' => $admin->code_company,
+            ]);
+
+            DB::commit();
+
+            // Hapus file lama setelah database berhasil diupdate
+            if (
+                $request->hasFile('file_path') &&
+                $oldFile &&
+                Storage::disk('public')->exists($oldFile)
+            ) {
+                Storage::disk('public')->delete($oldFile);
+            }
+
+            return response()->json(['status_message' => 'success','note' => 'Data berhasil diperbarui.','results' => []]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            // Jika upload file baru berhasil tetapi DB gagal,
+            // hapus file baru agar tidak menjadi sampah.
+            if (
+                isset($newFile) &&
+                $newFile !== $oldFile &&
+                Storage::disk('public')->exists($newFile)
+            ) {
+                Storage::disk('public')->delete($newFile);
+            }
+
+            return response()->json(['status_message' => 'error', 'note' => 'Terjadi kesalahan: ' . $e->getMessage(), 'results' => []], 500);
+        }
+    }
+    
+    public function deletearsip(Request $request)
+    {
+        $admin = User::where('id', $request->u)->where('key_token', $request->token)->first();
+        if (!$admin) {
+            return response()->json(['status_message' => 'error','note' => 'Data user tidak valid'], 401);
+        }
+
+        $menus = ['dataarsip', 'deletearsip'];
+        $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
+
+        $hasNoAccess = collect($menus)->contains(function ($menu) use ($access) {
+            return ($access[$menu] ?? 'No') === 'No';
+        });
+
+        if ($hasNoAccess) {
+            return response()->json(['status_message' => 'error','note' => 'Tidak ada akses','results' => []], 403);
+        }
+
+        $arsip = Arsip::where('code_data', $request->code_data)->where('code_company', $admin->code_company)->first();
+        if (!$arsip) {
+            return response()->json(['status_message' => 'error','note' => 'Data tidak ditemukan','results' => []], 404);
+        }
+
+        try {
+            DB::beginTransaction();
+            $filePath = $arsip->file_path;
+            $arsip->delete();
+
+            ArsipLog::create([
+                'id'           => Str::uuid(),
+                'code_data'    => ltrim(now()->format('YmdHis').Str::random(1),'0'),
+                'code_arsip'   => $arsip->code_data,
+                'code_user'    => $admin->code_data,
+                'aksi'         => "Hapus data arsip [{$arsip->judul} - {$arsip->code_data}]",
+                'code_company' => $admin->code_company,
+            ]);
+
+            Activity::create([
+                'id'           => Str::uuid(),
+                'code_data'    => ltrim(now()->format('YmdHis').Str::random(1),'0'),
+                'code_user'    => $admin->code_data,
+                'activity'     => "Hapus data arsip [{$arsip->judul} - {$arsip->code_data}]",
+                'code_company' => $admin->code_company,
+            ]);
+
+            DB::commit();
+
+            // Hapus file setelah database berhasil dihapus
+            if ($filePath && Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
+            }
+
+            return response()->json(['status_message' => 'success','note' => 'Data berhasil dihapus','results' => []]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['status_message' => 'error','note' => 'Terjadi kesalahan: ' . $e->getMessage(),'results' => []], 500);
+        }
+    }
+
     // KategoriArsip    
     public function kategoriarsip(Request $request)
     {

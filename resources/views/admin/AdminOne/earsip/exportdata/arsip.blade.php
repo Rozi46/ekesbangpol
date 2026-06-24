@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <title>Export to Excel</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <style> .strtable{ mso-number-format:\@; } table tr th,table tr td{border: 1px solid #000;} </style>
+    </head>
+    <body>
+        <table class="table_view table-striped table-hover">
+            <thead>
+                <tr>
+                    <th style="width:40px; text-align: center;">No</th>
+                    <th style="width:200px; text-align: center;">Kode Data</th>
+                    <th style="width:200px; text-align: center;">Kategori</th>
+                    <th style="width:200px; text-align: center;">Judul</th>
+                    <th style="width:200px; text-align: center;">Tanggal</th>
+                    <th style="width:450px; text-align: center;">Deskripsi</th>
+                    <th style="width:200px; text-align: center;">Akses</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($results['data'] as $view_data)
+                    <tr>
+                        <td class="strtable" style="text-align:center;">{{ $loop->iteration }}</td>
+                        <td class="strtable" style="text-align:center;">{{$view_data['code_data']}}</td>
+						<td class="strtable" >{{$view_data['kategori']['nama_kategori']}}</td>
+						<td class="strtable" >{{$view_data['judul']}}</td>
+						<td class="strtable" >{{$view_data['tanggal_dokumen']}}</td>
+						<td class="strtable" >{{$view_data['deskripsi']}}</td>
+						<td class="strtable" >{{$view_data['akses']}}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td style="text-align:center; padding: 20px; background-color: #FFFFFF; cursor: default; font-weight: 600; font-size: 14px;" colspan="4">Tidak ada data yang tersedia</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </body>
+</html>

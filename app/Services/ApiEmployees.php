@@ -90,6 +90,7 @@ class ApiEmployees
                 $q->where('nama_pegawai', 'ILIKE', "%{$search}%")
                     ->orWhere('gender', 'ILIKE', "%{$search}%")
                     ->orWhere('nomor_hp', 'ILIKE', "%{$search}%")
+                    ->orWhere('email', 'ILIKE', "%{$search}%")
                     ->orWhere('code_data', 'ILIKE', "%{$search}%")
                     ->orWhereHas('position', function ($sub) use ($search) {
                         $sub->where('jabatan', 'ILIKE', "%{$search}%");
@@ -97,7 +98,7 @@ class ApiEmployees
             });
         }
 
-        $allowedSort = ['created_at', 'code_data', 'nama_pegawai', 'gender', 'nomor_hp', 'jabatan'];
+        $allowedSort = ['created_at', 'code_data', 'nama_pegawai', 'gender', 'jabatan', 'email', 'nomor_hp'];
         $sortBy = in_array($request->sort_by, $allowedSort) ? $request->sort_by : 'created_at';
         $sortOrder = $request->sort_order === 'desc' ? 'desc' : 'asc';
         if ($sortBy === 'jabatan') {

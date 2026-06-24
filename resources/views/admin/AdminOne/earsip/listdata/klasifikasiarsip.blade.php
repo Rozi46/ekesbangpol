@@ -43,7 +43,7 @@
                                     </thead>
                                     <tbody id="DataTableBody">
                                         <tr>
-                                            <td colspan="7" class="text-center p-4">
+                                            <td colspan="8" class="text-center p-4">
                                                 <i class="fa fa-spinner fa-spin"></i> Memuat data...
                                             </td>
                                         </tr>
@@ -311,22 +311,15 @@
 
             function renderHeader() {
                 let title   = 'Data Klasifikasi Arsip';
-                let buttons = `<button type="button" class="btn btn-secondary" onclick="BackPage()">
-                                <i class="fa fa-chevron-left"></i> Kembali
-                            </button> `;
+                let buttons = `<button type="button" class="btn btn-secondary" onclick="BackPage()"><i class="fa fa-chevron-left"></i> Kembali</button> `;
 
                 switch (state.mode) {
                     case 'list':
                         if (action.new) {
-                            buttons += `<button type="button" class="btn btn-primary" id="btnTambah">
-                                            <i class="fa fa-plus"></i> Tambah Data
-                                        </button> `;
+                            buttons += `<button type="button" class="btn btn-primary" id="btnTambah"><i class="fa fa-plus"></i> Tambah Data</button> `;
                         }
                         if (action.export) {
-                            buttons += `<button type="button" class="btn btn-info"
-                                            onclick="exportdata({url:'/admin/exportklasifikasiarsip', btn:this})">
-                                            <i class="fa fa-download"></i> Export Data
-                                        </button>`;
+                            buttons += `<button type="button" class="btn btn-info" onclick="exportdata({url:'/admin/exportklasifikasiarsip', btn:this})"><i class="fa fa-download"></i> Export Data</button>`;
                         }
                         break;
                     case 'add'  : title = 'Tambah Data Klasifikasi Arsip'; break;
@@ -435,7 +428,7 @@
                             $('#field_code_data').val(d.code_data ?? '');
                             $('#field_codeklasifikasi').val(d.code_klasifikasi ?? '');
                             $('#field_namaklasifikasi').val(d.nama_klasifikasi ?? '');
-                            $('#field_deskripsi').val(d.nama_klasifikasi ?? '');
+                            $('#field_deskripsi').val(d.deskripsi ?? '');
                             $('#field_retensiaktif').val(d.retensi_aktif ?? '');
                             $('#field_retensiinaktif').val(d.retensi_inaktif ?? '');
                         }
@@ -528,17 +521,13 @@
                             setFieldError('wrap_deskripsi', 'err_deskripsi', errors.deskripsi[0]);
                         }
                         if (errors.retensi_aktif) {
-                            setFieldError('wrap_retensiaktif', 'errretensiaktif', errors.retensi_aktif[0]);
+                            setFieldError('wrap_retensiaktif', 'err_retensiaktif', errors.retensi_aktif[0]);
                         }
                         if (errors.retensi_inaktif) {
                             setFieldError('wrap_retensiinaktif', 'err_retensiinaktif', errors.retensi_inaktif[0]);
                         }
 
-                        SystemToast('danger',
-                            xhr.responseJSON?.note    ||
-                            xhr.responseJSON?.message ||
-                            'Gagal menyimpan data'
-                        );
+                        SystemToast('danger', xhr.responseJSON?.note || xhr.responseJSON?.message || 'Gagal menyimpan data');
                     },
                     complete: function () {
                         btn.prop('disabled', false).html('<i class="fa fa-save"></i> Simpan');
@@ -575,24 +564,16 @@
             * RENDER TABLE
             * ========================================================= */
             function renderLoading() {
-                $('#DataTableBody').html(
-                    `<tr><td colspan="7" class="text-center">
-                        <i class="fa fa-spinner fa-spin"></i> Memuat data...
-                    </td></tr>`
-                );
+                $('#DataTableBody').html(`<tr><td colspan="8" class="text-center"><i class="fa fa-spinner fa-spin"></i> Memuat data...</td></tr>` );
             }
 
             function renderError() {
-                $('#DataTableBody').html(
-                    `<tr><td colspan="7" class="text-danger text-center">Gagal memuat data</td></tr>`
-                );
+                $('#DataTableBody').html(`<tr><td colspan="8" class="text-danger text-center">Gagal memuat data</td></tr>`);
             }
 
             function renderTable(res) {
                 if (!res.data || !res.data.length) {
-                    $('#DataTableBody').html(
-                        `<tr><td colspan="7" class="text-center">Tidak ada data</td></tr>`
-                    );
+                    $('#DataTableBody').html(`<tr><td colspan="8" class="text-center">Tidak ada data</td></tr>`);
                     return;
                 }
 
@@ -611,8 +592,8 @@
                             <td>${item.code_klasifikasi ?? '-'}</td>
                             <td>${item.nama_klasifikasi ?? '-'}</td>
                             <td>${item.deskripsi        ?? '-'}</td>
-                            <td>${item.retensi_aktif ? `${item.retensi_aktif} Tahun` : '-'}</td>
-                            <td>${item.retensi_inaktif ? `${item.retensi_inaktif} Tahun` : '-'}</td>
+                            <td>${item.retensi_aktif    ? `${item.retensi_aktif} Tahun` : '-'}</td>
+                            <td>${item.retensi_inaktif  ? `${item.retensi_inaktif} Tahun` : '-'}</td>
                             <td class="text-center">
                                 <div class="dropdown dropleft">
                                     <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
@@ -630,7 +611,7 @@
                                         </a>
                                         <a class="dropdown-item delete-data ${deleteCls}" style="cursor:pointer;"
                                         data-code="${item.code_data}"
-                                        data-name="${item.code_klasifikasi ?? ''}" ${deleteAttr}>
+                                        data-name="${item.nama_klasifikasi ?? ''}" ${deleteAttr}>
                                             Hapus Data
                                         </a>
                                     </div>
@@ -742,18 +723,10 @@
                 const modal = $('div[data-model="confirmasi"]');
 
                 modal.modal({ backdrop: false });
-                modal.find('.modal-body').html(
-                    `<div class="alert alert-danger">
-                        Anda yakin ingin menghapus data <b>${name}</b>?
-                    </div>`
-                );
+                modal.find('.modal-body').html(`<div class="alert alert-danger">Anda yakin ingin menghapus data <b>${name}</b>?</div>`);
 
                 $('button[btn-action="action-confirmasi"]').remove();
-                $('button[btn-action="close-confirmasi"]').before(
-                    `<button type="button" class="btn btn-primary btn-sm" btn-action="action-confirmasi">
-                        Yakin
-                    </button>`
-                );
+                $('button[btn-action="close-confirmasi"]').before(`<button type="button" class="btn btn-primary btn-sm" btn-action="action-confirmasi">Yakin</button>`);
 
                 $(document)
                     .off('click', '[btn-action="action-confirmasi"]')

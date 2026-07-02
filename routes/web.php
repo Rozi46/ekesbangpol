@@ -35,6 +35,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 	Route::delete('/deletearsip', [ArsipController::class, 'deletearsip']);
 	Route::post('/exportarsip', [ArsipController::class, 'exportarsip']);
 	Route::get('/listopkategoriarsip',[ArsipController::class, 'listopkategoriarsip']);
+	Route::get('/arsiplogs',[ArsipController::class, 'listarsiplogs']);
+	Route::get('/datalistarsiplogs',[ArsipController::class, 'datalistarsiplogs']);
 	// KategoriArsip
 	Route::get('/kategoriarsip',[ArsipController::class, 'listkategoriarsip']);
 	Route::get('/datalistkategoriarsip', [ArsipController::class, 'datalistkategoriarsip']);

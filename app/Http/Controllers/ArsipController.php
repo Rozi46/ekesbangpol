@@ -199,7 +199,7 @@ class ArsipController extends Controller
                 'code_kategori'     => 'required|string|max:200',
                 'judul'             => 'required|string|max:200',
                 'tanggal_dokumen'   => 'required|string|max:200',
-                'file_path'         => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:5120', // 5 MB
+                'file_path'         => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,zip,rar|max:5120', // 5 MB
                 'deskripsi'         => 'required|string|max:200',
                 'akses'             => 'required|string|max:200',
             ]);
@@ -415,6 +415,103 @@ class ArsipController extends Controller
             return response()->json(['success' => false,'message' => $e->getMessage() ], 500);
         }
     } 
+    public function listarsiplogs(Request $request)
+    {
+        try { 
+            if (!session()->has('key_token_kesbangpol') || !session()->has('admin_login_kesbangpol') || 
+                empty(session('key_token_kesbangpol')) || empty(session('admin_login_kesbangpol'))) {
+                return redirect('/admin/logout')->with('error', 'Session tidak valid');
+            }
+
+            date_default_timezone_set('Asia/Jakarta');
+
+            $request['u'] = session('admin_login_kesbangpol');
+            $request['token'] = session('key_token_kesbangpol');
+            $request['app'] = 'earsip';
+            $request['url_active'] = 'arsiplogs';
+
+            $menu = 'earsip';
+            $action = 'arsiplogs';
+            $viewpath = 'admin.AdminOne.earsip.listdata.arsiplogs';
+
+            $responseUser = app('App\Services\ApiUsers')->getadmin($request);
+            $get_user = is_array($responseUser) ? $responseUser : $responseUser->getData(true);
+            if (!$get_user || $get_user['status_message'] === 'error') {return redirect('/admin/logout')->with('error', 'Terjadi kesalahan!!! silahkan hubungi kami');}
+            $resultsUser = $get_user['results'][0];
+            $res_user = $resultsUser['detailadmin'][0];
+            $res_level_user = $resultsUser['leveladmin'][0];
+            $request['data_company'] = $get_user['results'][0]['data_company'];
+            $request['nama_admin'] = \Str::limit($res_user['full_name'], 15, '...');
+
+            $responseSetting = app('App\Services\ApiSettings')->getsetting($request);
+            $get_setting = is_array($responseSetting) ? $responseSetting : $responseSetting->getData(true);
+            $request['manual_book'] = $get_setting['results']['data_setting']['manual_book'] ?? null;
+
+            $responseLevelakses = app('App\Services\ApiSettings')->getlevelakses($request);
+            $list_akses = is_array($responseLevelakses) ? $responseLevelakses : $responseLevelakses->getData(true);
+
+            $level_user = collect($res_level_user)->pluck('access_rights', 'data_menu')->toArray();
+
+            if ( ($level_user[$request['app']] ?? 'No') === 'No' || ($level_user[$request['url_active']] ?? 'No') === 'No' || ($level_user[$menu] ?? 'No') === 'No' || ($level_user[$action] ?? 'No') === 'No' ) { return redirect('/admin/dash')->with('error', 'Tidak ada akses'); }
+
+            $vd = intval($request->vd ?? 20);            
+            $request['vd'] = $vd;
+
+            return view($viewpath,['url_api' => env('APP_API'),'app' => $request['app'],'url_active' => $request['url_active'],'request' => $request,'res_user' => $res_user,'level_user' => $level_user,'list_akses' => $list_akses['results'],'count_vd' => $vd,'keysearch' => $request->keysearch]);
+        } catch (Throwable $e) {
+            Log::error('arsiplogs Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
+            return redirect('/admin/logout')->with('error', 'Terjadi kesalahan sistem.');
+        }        
+    }
+
+    public function datalistarsiplogs(Request $request)
+    {
+        try { 
+            if (!session()->has('key_token_kesbangpol') || !session()->has('admin_login_kesbangpol') || 
+                empty(session('key_token_kesbangpol')) || empty(session('admin_login_kesbangpol'))) {
+                return redirect('/admin/logout')->with('error', 'Session tidak valid');
+            }
+
+            date_default_timezone_set('Asia/Jakarta');
+
+            $request['u'] = session('admin_login_kesbangpol');
+            $request['token'] = session('key_token_kesbangpol');
+            $request['app'] = 'earsip';
+            $request['url_active'] = 'arsiplogs';
+
+            $menu = 'earsip';
+            $action = 'arsiplogs';
+
+            $responseUser = app('App\Services\ApiUsers')->getadmin($request);
+            $get_user = is_array($responseUser) ? $responseUser : $responseUser->getData(true);
+            if (!$get_user || $get_user['status_message'] === 'error') {return redirect('/admin/logout')->with('error', 'Terjadi kesalahan!!! silahkan hubungi kami');}
+            $resultsUser = $get_user['results'][0];
+            $res_user = $resultsUser['detailadmin'][0];
+            $res_level_user = $resultsUser['leveladmin'][0];
+            $request['data_company'] = $get_user['results'][0]['data_company'];
+            $request['nama_admin'] = \Str::limit($res_user['full_name'], 15, '...');
+
+            $responseSetting = app('App\Services\ApiSettings')->getsetting($request);
+            $get_setting = is_array($responseSetting) ? $responseSetting : $responseSetting->getData(true);
+            $request['manual_book'] = $get_setting['results']['data_setting']['manual_book'] ?? null;
+
+            $responseLevelakses = app('App\Services\ApiSettings')->getlevelakses($request);
+            $list_akses = is_array($responseLevelakses) ? $responseLevelakses : $responseLevelakses->getData(true);
+
+            $level_user = collect($res_level_user)->pluck('access_rights', 'data_menu')->toArray();
+
+            if ( ($level_user[$request['app']] ?? 'No') === 'No' || ($level_user[$request['url_active']] ?? 'No') === 'No' || ($level_user[$menu] ?? 'No') === 'No' || ($level_user[$action] ?? 'No') === 'No' ) { return redirect('/admin/dash')->with('error', 'Tidak ada akses'); }
+
+            $response = app('App\Services\ApiArsip')->arsiplogs($request);            
+            $results = is_array($response) ? $response : $response->getData(true); 
+
+            return $results;
+            
+        } catch (Throwable $e) {
+            Log::error('arsiplogs Error: ' . $e->getMessage(), ['user' => $request->session()->get('admin_login_kesbangpol')]);
+            return redirect('/admin/logout')->with('error', 'Terjadi kesalahan sistem.');
+        }        
+    }
 
     // KategoriArsip
     public function listkategoriarsip(Request $request)

@@ -192,7 +192,7 @@ class ApiArsip
             'tanggal_dokumen' => 'required|string|max:200',
             'deskripsi'       => 'required|string|max:200',
             'akses'           => 'required|string|max:200',
-            'file_path'       => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:5120',
+            'file_path'       => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,zip,rar|max:5120',
         ]);
 
         if ($validator->fails()) {
@@ -512,6 +512,49 @@ class ApiArsip
             DB::rollBack();
             return response()->json(['status_message' => 'error','note' => 'Terjadi kesalahan: ' . $e->getMessage(),'results' => []], 500);
         }
+    } 
+
+    public function arsiplogs(Request $request)
+    {
+        $admin = User::where('id', $request->u)->where('key_token', $request->token)->first();
+        if (!$admin) {
+            return response()->json(['status_message' => 'error','note' => 'User tidak valid'], 401);
+        }
+
+        $menus = ['earsip', 'arsiplogs'];
+        $access = LevelAdmin::where('code_data', $admin->level)->whereIn('data_menu', $menus)->pluck('access_rights', 'data_menu');
+
+        $hasNoAccess = collect($menus)->contains(function ($menu) use ($access) {
+            return ($access[$menu] ?? 'No') === 'No';
+        });
+
+        if ($hasNoAccess) {
+            return response()->json(['status_message' => 'error','note' => 'Tidak ada akses','results' => []], 403);
+        } 
+
+        $query = ArsipLog::with('user')
+            ->when($request->filled('search'), function ($q) use ($request) {
+                $search = "%{$request->search}%";
+
+                $q->where(function ($query) use ($search) {
+                    $query->where('code_data', 'ILIKE', $search)
+                        ->orWhere('code_arsip', 'ILIKE', $search)
+                        ->orWhere('aksi', 'ILIKE', $search)
+                        ->orWhereHas('user', function ($kategori) use ($search) {
+                            $kategori->where('full_name', 'ILIKE', $search);
+                        });
+                });
+            });     
+
+        $allowedSort = ['created_at', 'code_data', 'full_name', 'aksi'];
+        $sortBy = in_array($request->sort_by, $allowedSort) ? $request->sort_by : 'created_at';
+        $sortOrder = $request->sort_order === 'desc' ? 'desc' : 'asc';
+
+        $data = $query
+            ->orderBy($sortBy, $sortOrder)
+            ->paginate((int) $request->per_page);
+
+        return response()->json(['status_message'=>'success','note'=>'Proses data berhasil','results'=> $data],200);
     }
 
     // KategoriArsip    

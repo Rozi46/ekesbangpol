@@ -32,9 +32,9 @@
                                     <thead>
                                         <tr>
                                             <th style="width:50px; text-align:center;">No</th>
-                                            <th class="sortable" style="min-width:120px;" data-sort="code_data">Tanggal Aktivitas <i class="fa fa-sort"></i></th>
-                                            <th class="sortable" style="min-width:120px;" data-sort="code_kategori">Pengguna <i class="fa fa-sort"></i></th>
-                                            <th class="sortable" style="min-width:300px;" data-sort="judul">Aktifitas <i class="fa fa-sort"></i></th>
+                                            <th class="sortable" style="min-width:120px;" data-sort="created_at">Tanggal Aktivitas <i class="fa fa-sort"></i></th>
+                                            <th class="sortable" style="min-width:120px;" data-sort="user_id">Pengguna <i class="fa fa-sort"></i></th>
+                                            <th class="sortable" style="min-width:300px;" data-sort="aksi">Aktifitas <i class="fa fa-sort"></i></th>
                                         </tr>
                                     </thead>
                                     <tbody id="DataTableBody">
@@ -63,15 +63,11 @@
             * CONSTANTS
             * ============================================================= */
             const routes = {
-                list     : "{{ url('/admin/datalistarsiplogs') }}"
+                list : "{{ url('/admin/datalistarsiplogs') }}"
             };
 
-            const action = {
-                new    : {{ (($level_user['newarsip']    ?? 'No') === 'Yes') ? 'true' : 'false' }},
-                edit   : {{ (($level_user['editarsip']   ?? 'No') === 'Yes') ? 'true' : 'false' }},
-                delete : {{ (($level_user['deletearsip'] ?? 'No') === 'Yes') ? 'true' : 'false' }},
-                export : {{ (($level_user['exportarsip'] ?? 'No') === 'Yes') ? 'true' : 'false' }}
-            };
+            // Arsip Logs bersifat read-only (audit trail), hanya butuh hak export
+            const canExport = {{ (($level_user['exportarsip'] ?? 'No') === 'Yes') ? 'true' : 'false' }};
 
             $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } });
 
@@ -84,84 +80,30 @@
                 perPage     : parseInt($('#countvdajax').val()) || 10,
                 sortBy      : 'created_at',
                 sortOrder   : 'desc',
-                searchTimer : null,
-                mode        : 'list',
-                currentCode : null
+                searchTimer : null
             };
 
             function formatTanggal(dateString) {
                 if (!dateString) return '-';
                 const date = new Date(dateString);
                 if (isNaN(date.getTime())) return dateString;
-                const opts = { weekday:'long', day:'numeric', month:'long', year:'numeric', timeZone:'Asia/Jakarta' };
+                const opts  = { weekday:'long', day:'numeric', month:'long', year:'numeric', timeZone:'Asia/Jakarta' };
                 const tOpts = { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false, timeZone:'Asia/Jakarta' };
                 return date.toLocaleDateString('id-ID', opts) + ' — ' + date.toLocaleTimeString('id-ID', tOpts);
             }
 
             /* =============================================================
-            * PANEL — tampil / sembunyikan
+            * HEADER — statis, cuma tombol Export (jika berhak)
             * ============================================================= */
-            function showPanel(mode, code) {
-                state.mode        = mode;
-                state.currentCode = code || null;
-
-                $('#panel-list, #panel-form, #panel-view').hide();
-                $('#form-alert').hide();
-                renderHeader();
-
-                switch (mode) {
-                    case 'list':
-                        $('#panel-list').show();
-                        break;
-
-                    case 'add':
-                        resetForm();
-                        $('#field_code_data').val('Auto-generate');
-                        $('#panel-form').show();
-                        break;
-
-                    case 'edit':
-                        resetForm();
-                        loadDetail(code, 'edit');
-                        $('#panel-form').show();
-                        break;
-
-                    case 'view':
-                        loadDetail(code, 'view');
-                        $('#panel-view').show();
-                        break;
-                }
-            }
-
-            /* =============================================================
-            * HEADER — render tombol sesuai mode
-            * ============================================================= */
-            function renderHeader() {
-                let title   = 'Arsip Logs';
+            function renderHeader() {                
                 let buttons = '<button type="button" class="btn btn-secondary" onclick="BackPage()">'
                             + '<i class="fa fa-chevron-left"></i> Kembali</button> ';
-
-                switch (state.mode) {
-                    case 'list':
-                        title = 'Arsip Logs';
-                        if (action.new)
-                            buttons += '<button type="button" class="btn btn-primary" id="btnTambah">'
-                                    + '<i class="fa fa-plus"></i> Tambah Data</button> ';
-                        if (action.export)
-                            buttons += '<button type="button" class="btn btn-info" '
-                                    + 'onclick="exportdata({url:\'/admin/exportarsip\', btn:this})">'
-                                    + '<i class="fa fa-download"></i> Export Data</button>';
-                        break;
-                    case 'add'  : title = 'Tambah Data Arsip'; break;
-                    case 'edit' : title = 'Ubah Data Arsip';   break;
-                    case 'view' : title = 'Detail Data Arsip';  break;
+                if (canExport) {
+                    buttons += '<button type="button" class="btn btn-info" '
+                            + 'onclick="exportdata({url:\'/admin/exportarsip\', btn:this})">'
+                            + '<i class="fa fa-download"></i> Export Data</button>';
                 }
-
-                $('#pageTitle').text(title);
                 $('#headerActions').html(buttons);
-
-                // Bind tombol Tambah — hapus event lama terlebih dulu supaya tidak menumpuk
-                $('#btnTambah').off('click').on('click', function () { showPanel('add'); });
             }
 
             /* =============================================================
@@ -212,17 +154,12 @@
 
                 let html = '';
                 $.each(res.data, function (index, item) {
-                    const editCls    = action.edit   ? '' : 'disabled text-muted';
-                    const deleteCls  = action.delete ? '' : 'disabled text-muted';
-                    const editAttr   = action.edit   ? '' : 'aria-disabled="true" tabindex="-1"';
-                    const deleteAttr = action.delete ? '' : 'aria-disabled="true" tabindex="-1"';
-
                     html +=
                         '<tr>' +
                             '<td class="text-center">' + (res.from + index) + '</td>' +
-                            '<td>' + (item.created_at   || '-') + '</td>' +
-                            '<td>' + (item.code_user    || '-') + '</td>' +
-                            '<td>' + (item.aksi         || '-') + '</td>' +
+                            '<td>' + (item.created_at ? formatTanggal(item.created_at) : '-') + '</td>' +
+                            '<td>' + (item.user?.full_name || '-') + '</td>' +
+                            '<td>' + (item.aksi           || '-') + '</td>' +
                         '</tr>';
                 });
 
@@ -258,11 +195,6 @@
             * EVENT LISTENERS
             * ============================================================= */
 
-            // Tombol form & view
-            $('#btnCancelForm').on('click',   function () { showPanel('list'); });
-            $('#btnBackFromView').on('click', function () { showPanel('list'); });
-            $('#btnEditFromView').on('click', function () { showPanel('edit', $(this).data('code')); });
-
             // Search dengan debounce
             $('#searchInput').on('keyup', function () {
                 clearTimeout(state.searchTimer);
@@ -292,9 +224,9 @@
 
             // Sortable headers
             $(document).on('click', '.sortable', function () {
-                const sort      = $(this).data('sort');
-                state.sortOrder = (state.sortBy === sort && state.sortOrder === 'asc') ? 'desc' : 'asc';
-                state.sortBy    = sort;
+                const sort       = $(this).data('sort');
+                state.sortOrder  = (state.sortBy === sort && state.sortOrder === 'asc') ? 'desc' : 'asc';
+                state.sortBy     = sort;
                 $('.sortable i').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
                 $(this).find('i')
                     .removeClass('fa-sort')
@@ -305,7 +237,7 @@
             /* =============================================================
             * INIT
             * ============================================================= */
-            showPanel('list');
+            renderHeader();
             loadData(1);
 
         });

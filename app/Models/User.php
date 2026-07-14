@@ -74,4 +74,14 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(LevelAdmin::class, 'level', 'code_data');
     }
+    
+    public function leaveApprovals()
+    {
+        return $this->hasMany(LeaveApprovals::class, 'code_user', 'code_data');
+    } 
+    
+    public function leaveRequests()
+    {
+        return $this->hasMany(LeaveRequests::class, 'code_user', 'code_data');
+    }
 }

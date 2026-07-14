@@ -24,4 +24,24 @@ class LeaveRequests extends Model
         'created_at',
         'updated_at'
     ];
+
+    public function leave()
+    {
+        return $this->belongsTo(Leave::class, 'code_cuti', 'code_data');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'code_user', 'code_data');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'code_company', 'code_data');
+    }
+    
+    public function leaveApprovals()
+    {
+        return $this->hasMany(LeaveApprovals::class, 'code_pengajuan', 'code_data');
+    } 
 }

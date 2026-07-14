@@ -33,4 +33,19 @@ class Company extends Model
     {
         return $this->hasMany(User::class, 'code_company', 'code_data');
     }
+    
+    public function leaveAprovals()
+    {
+        return $this->hasMany(LeaveApprovals::class, 'code_company', 'code_data');
+    }
+    
+    public function leaveBalances()
+    {
+        return $this->hasMany(LeaveBalances::class, 'code_company', 'code_data');
+    }
+    
+    public function leaveRequests()
+    {
+        return $this->hasMany(LeaveRequests::class, 'code_company', 'code_data');
+    }
 }

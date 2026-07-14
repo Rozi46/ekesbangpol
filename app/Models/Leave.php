@@ -19,4 +19,9 @@ class Leave extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
+    
+    public function leaveRequests()
+    {
+        return $this->hasMany(leaveRequests::class, 'code_cuti', 'code_data');
+    }
 }

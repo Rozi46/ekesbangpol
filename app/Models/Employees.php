@@ -44,4 +44,9 @@ class Employees extends Model
     {
         return $this->belongsTo(Ranks::class, 'code_pangkat', 'code_data');
     }
+    
+    public function leaveBalances()
+    {
+        return $this->hasMany(LeaveBalances::class, 'code_pegawai', 'code_data');
+    }
 }

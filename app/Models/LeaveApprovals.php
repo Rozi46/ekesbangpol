@@ -24,4 +24,19 @@ class LeaveApprovals extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
+
+    public function leaveRequests()
+    {
+        return $this->belongsTo(leaveRequests::class, 'code_pengajuan', 'code_data');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'code_user', 'code_data');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'code_company', 'code_data');
+    }
 }

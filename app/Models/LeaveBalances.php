@@ -23,4 +23,14 @@ class LeaveBalances extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
+
+    public function employees()
+    {
+        return $this->belongsTo(Employees::class, 'code_pegawai', 'code_data');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'code_company', 'code_data');
+    }
 }
